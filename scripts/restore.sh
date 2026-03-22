@@ -61,11 +61,54 @@ latest_backup_for() {
     ls -1t "${target}.bak."* 2>/dev/null | head -n 1
 }
 
+select_backup_for_target() {
+    local target="$1"
+    local title="$2"
+    local selection
+    local -a backups
+    local -a menu_items
+
+    mapfile -t backups < <(ls -1t "${target}.bak."* 2>/dev/null)
+    if [[ ${#backups[@]} -eq 0 ]]; then
+        echo ""
+        return 0
+    fi
+
+    for backup in "${backups[@]}"; do
+        menu_items+=("$backup" "")
+    done
+
+    if command -v whiptail >/dev/null 2>&1; then
+        selection=$(
+            whiptail \
+                --title "$title" \
+                --menu "Select the backup to restore" \
+                20 90 10 \
+                "${menu_items[@]}" \
+                3>&1 1>&2 2>&3
+        ) || return 1
+        printf '%s\n' "$selection"
+        return 0
+    fi
+
+    printf '%s\n' "${backups[0]}"
+}
+
 restore_latest_backup() {
     local target="$1"
+    local title="$2"
     local backup_path
 
-    backup_path="$(latest_backup_for "$target")"
+    backup_path="$(select_backup_for_target "$target" "$title")"
+    if [[ $? -ne 0 ]]; then
+        echo "Restore cancelled for $target"
+        return
+    fi
+
+    if [[ -z "${backup_path:-}" ]]; then
+        backup_path="$(latest_backup_for "$target")"
+    fi
+
     if [[ -z "${backup_path:-}" ]]; then
         echo "No backup found for $target"
         return
@@ -77,20 +120,20 @@ restore_latest_backup() {
 
 restore_zsh() {
     echo "--- Restoring zsh backups ---"
-    restore_latest_backup "$ZSH_USER_TARGET"
-    restore_latest_backup "$ZSH_MANAGED_TARGET"
+    restore_latest_backup "$ZSH_USER_TARGET" "Restore ~/.zshrc"
+    restore_latest_backup "$ZSH_MANAGED_TARGET" "Restore ~/.zshrc.my-setup-ubuntu"
 }
 
 restore_git() {
     echo "--- Restoring git backups ---"
-    restore_latest_backup "$GIT_USER_TARGET"
-    restore_latest_backup "$GIT_MANAGED_TARGET"
+    restore_latest_backup "$GIT_USER_TARGET" "Restore ~/.gitconfig"
+    restore_latest_backup "$GIT_MANAGED_TARGET" "Restore ~/.gitconfig.my-setup-ubuntu"
 }
 
 restore_vim() {
     echo "--- Restoring vim backups ---"
-    restore_latest_backup "$VIM_USER_TARGET"
-    restore_latest_backup "$VIM_MANAGED_TARGET"
+    restore_latest_backup "$VIM_USER_TARGET" "Restore ~/.vimrc"
+    restore_latest_backup "$VIM_MANAGED_TARGET" "Restore ~/.vimrc.my-setup-ubuntu"
 }
 
 if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then

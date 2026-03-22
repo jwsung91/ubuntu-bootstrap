@@ -6,6 +6,19 @@ REQUIRED_WARN=0
 OPTIONAL_OK=0
 OPTIONAL_WARN=0
 
+check_required_shell() {
+    local label="$1"
+    local command_string="$2"
+
+    if bash -lc "$command_string" >/dev/null 2>&1; then
+        echo "[OK][required] $label"
+        REQUIRED_OK=$((REQUIRED_OK + 1))
+    else
+        echo "[WARN][required] $label"
+        REQUIRED_WARN=$((REQUIRED_WARN + 1))
+    fi
+}
+
 check_required() {
     local label="$1"
     shift
@@ -37,6 +50,7 @@ check_required "git available" git --version
 check_required "zsh available" zsh --version
 check_required "vim available" vim --version
 check_required "ssh available" ssh -V
+check_required_shell "~/.local/bin is on PATH" 'case ":$PATH:" in *":$HOME/.local/bin:"*) exit 0 ;; *) exit 1 ;; esac'
 
 check_optional "gpg available" gpg --version
 check_optional "gpg-agent configuration valid" gpg-agent --gpgconf-test
@@ -50,6 +64,8 @@ check_optional "bat available" bat --version
 check_optional "jq available" jq --version
 check_optional "tmux available" tmux -V
 check_optional "xclip available" xclip -version
+check_optional "git user.name configured" git config --global user.name
+check_optional "git user.email configured" git config --global user.email
 
 if [[ -f "$HOME/.ssh/id_ed25519.pub" ]]; then
     echo "[OK][optional] SSH public key present: $HOME/.ssh/id_ed25519.pub"
