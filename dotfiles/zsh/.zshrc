@@ -1,11 +1,11 @@
-# Oh My Zsh 설정
+# Oh My Zsh configuration
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting)
 source $ZSH/oh-my-zsh.sh
 
-# Gemini API Key 주석
-# export GEMINI_API_KEY="여기에_키를_넣으세요"
+# Gemini API key example
+# export GEMINI_API_KEY="put_your_key_here"
 
 # Colorls Alias
 if [ -x "$(command -v colorls)" ]; then

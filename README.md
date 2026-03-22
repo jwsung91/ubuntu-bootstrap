@@ -1,47 +1,60 @@
-# My Ubuntu Setup Scripts 🚀
+# My Ubuntu Setup Scripts
 
-Ubuntu 환경을 빠르고 간편하게 초기 설정하기 위한 자동화 스크립트 모음입니다. 시스템 패키지 설치부터 쉘 설정, 폰트 및 개발 도구 구성을 한 번에 완료할 수 있습니다.
+This repository contains automation scripts for quickly bootstrapping an Ubuntu Desktop 22.04 / 24.04 `amd64` environment. It covers system packages, shell setup, fonts, and developer tooling in one run.
 
-## 📂 프로젝트 구조
+## Project Structure
 
 ```text
 .
-├── install.sh              # 메인 실행 파일 (전체 프로세스 관리)
-├── scripts/                # 단계별 설치 스크립트
-│   ├── 01-system.sh        # 시스템 업데이트, VS Code, Chrome 설치
-│   ├── 02-shell.sh         # Zsh, Oh My Zsh, 플러그인 설치
-│   ├── 03-appearance.sh    # D2Coding 폰트, ColorLS 설치
-│   └── 04-stow.sh          # GNU Stow를 이용한 설정 파일 링크
-└── dotfiles/               # 관리할 설정 파일들 (Stow 대상)
-    ├── zsh/                # .zshrc 등 Zsh 설정
-    ├── git/                # .gitconfig 등 Git 설정
-    └── vim/                # .vimrc 등 Vim 설정
+├── install.sh              # Main entry point that runs the full setup
+├── scripts/                # Step-by-step setup scripts
+│   ├── 01-system.sh        # System update, VS Code, and Chrome installation
+│   ├── 02-shell.sh         # Zsh, Oh My Zsh, and plugin installation
+│   ├── 03-appearance.sh    # D2Coding font and colorls installation
+│   └── 04-stow.sh          # Dotfile symlink setup via GNU Stow
+└── dotfiles/               # Managed configuration files for Stow
+    ├── zsh/                # Zsh configuration such as .zshrc
+    ├── git/                # Git configuration such as .gitconfig
+    └── vim/                # Vim configuration such as .vimrc
 ```
 
-## 🛠 포함된 주요 기능
+## Included Features
 
-1.  **시스템 최적화**: `apt update & upgrade`, 필수 패키지(`curl`, `wget`, `git`, `stow`, `build-essential`) 설치
-2.  **개발 환경**: VS Code 공식 PPA 등록 및 설치, Google Chrome 설치
-3.  **터미널 강화**: Zsh 기반 환경, Oh My Zsh, 플러그인(`autosuggestions`, `syntax-highlighting`)
-4.  **디자인**: D2Coding Nerd Font 설치, `colorls`를 통한 미려한 파일 목록 출력
-5.  **설정 관리**: GNU Stow를 사용하여 `dotfiles/` 안의 설정들을 홈 디렉토리로 자동 연결
+1. **System packages**: runs `apt update && apt upgrade` and installs required packages such as `curl`, `wget`, `git`, `stow`, and `build-essential`
+2. **Developer tools**: registers the official VS Code repository and installs Google Chrome
+3. **Terminal setup**: installs Zsh, Oh My Zsh, and the `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins
+4. **CLI appearance**: installs the D2Coding font and `colorls`
+5. **Dotfile management**: links files from `dotfiles/` into the home directory with GNU Stow
 
-## 🚀 설치 방법
+## Supported Environment
 
-`my-setup-ubuntu` 저장소 내에서 다음 명령어를 실행하세요:
+- Ubuntu Desktop `22.04` or `24.04`
+- `amd64` (`x86_64`) architecture
+
+ARM-based Ubuntu is not supported because the Chrome package used by the script is `amd64` only.
+
+## Installation
+
+Run the following command from inside the `my-setup-ubuntu` repository:
 
 ```bash
-# 실행 권한 부여 및 설치 시작
+# Start the full setup
 ./install.sh
 ```
 
-> **주의**: 스크립트 실행 중 `sudo` 권한(비밀번호 입력)이 필요할 수 있습니다. 각 스크립트 상단에 `set -e`가 포함되어 있어, 설치 중 에러 발생 시 즉시 중단되므로 안전합니다.
+> Note: `sudo` privileges are required during execution. Each script uses `set -euo pipefail` and exits early on unsupported Ubuntu versions or architectures.
 
-## 📝 추가 설정
+## Behavior
 
-- **Zsh 설정**: `dotfiles/zsh/.zshrc` 파일에서 `GEMINI_API_KEY` 등을 주석 해제하여 설정할 수 있습니다.
-- **Alias**: `ls` 명령어가 자동으로 `colorls`로 매핑되어 있습니다.
+- Several steps are written to be re-runnable and will reuse already installed components when possible.
+- Before applying `stow`, the script checks for conflicts. If files with the same target names already exist in your home directory, the process stops until you resolve them.
+- When `chsh` changes the default shell to `zsh`, the change applies on the next login.
 
-## 🔄 터미널 재시작
+## Additional Configuration
 
-모든 설치가 완료되면 터미널을 종료 후 다시 시작하거나, `source ~/.zshrc`를 실행하여 변경 사항을 적용하세요.
+- **Zsh settings**: add any extra environment variables you need in `dotfiles/zsh/.zshrc`.
+- **Aliases**: when `colorls` is installed, the `ls`, `l`, `la`, and `ll` aliases are applied automatically.
+
+## Restarting the Terminal
+
+After setup completes, restart the terminal or run `source ~/.zshrc` to apply the shell changes.

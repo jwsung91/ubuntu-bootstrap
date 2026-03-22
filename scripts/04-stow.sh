@@ -1,8 +1,18 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-echo "--- Dotfiles 심볼릭 링크 생성 (Stow) ---"
-# 스크립트 위치 기준으로 dotfiles 폴더로 이동
-cd "$(dirname "$0")/../dotfiles"
-stow zsh git vim
-cd -
+echo "--- Creating dotfile symlinks with Stow ---"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DOTFILES_DIR="$SCRIPT_DIR/../dotfiles"
+
+if [[ ! -d "$DOTFILES_DIR" ]]; then
+    echo "dotfiles directory not found: $DOTFILES_DIR"
+    exit 1
+fi
+
+if ! stow --dir="$DOTFILES_DIR" --target="$HOME" --simulate --restow zsh git vim; then
+    echo "Stow cannot proceed because existing files conflict with the target paths. Resolve the conflicts and run the script again."
+    exit 1
+fi
+
+stow --dir="$DOTFILES_DIR" --target="$HOME" --restow zsh git vim
