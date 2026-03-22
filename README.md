@@ -1,4 +1,4 @@
-# My Ubuntu Setup Scripts
+# Ubuntu Bootstrap
 
 This repository contains automation scripts for quickly bootstrapping an Ubuntu Desktop 22.04 / 24.04 `amd64` environment. It covers system packages, shell setup, fonts, and developer tooling in one run.
 

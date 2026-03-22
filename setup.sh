@@ -102,7 +102,7 @@ select_steps_with_whiptail() {
 
     selection=$(
         whiptail \
-            --title "Ubuntu Setup" \
+            --title "Ubuntu Bootstrap" \
             --checklist "Select the steps to run" \
             20 90 11 \
             "proxy" "Activate a proxy profile" OFF \
