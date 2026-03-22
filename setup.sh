@@ -20,6 +20,7 @@ Available steps:
   applications  VS Code and Chrome
   shell         Zsh, Oh My Zsh, plugins, and theme
   appearance    D2Coding font and colorls
+  tools         Developer CLI tools
   editor        Vim and plugin bootstrap
   dev-auth      Git, SSH, and GPG bootstrap
   config        Managed dotfile content update
@@ -44,6 +45,9 @@ run_step() {
             ;;
         appearance)
             ./scripts/04-appearance.sh
+            ;;
+        tools)
+            ./scripts/09-tools.sh "$@"
             ;;
         editor)
             ./scripts/05-editor.sh
@@ -91,6 +95,7 @@ select_steps_with_whiptail() {
             "applications" "VS Code and Chrome" OFF \
             "shell" "Zsh, Oh My Zsh, plugins, and theme" OFF \
             "appearance" "D2Coding font and colorls" OFF \
+            "tools" "Developer CLI tools" OFF \
             "editor" "Vim and plugin bootstrap" OFF \
             "dev-auth" "Git, SSH, and GPG bootstrap" OFF \
             "config" "Managed dotfile content update" OFF \
@@ -132,6 +137,7 @@ if [[ $# -eq 0 || "$1" == "select" ]]; then
         prompt_step "applications" "VS Code and Chrome"
         prompt_step "shell" "Zsh, Oh My Zsh, plugins, and theme"
         prompt_step "appearance" "D2Coding font and colorls"
+        prompt_step "tools" "developer CLI tools"
         prompt_step "editor" "Vim and plugin bootstrap"
         prompt_step "dev-auth" "Git, SSH, and GPG bootstrap"
         prompt_step "config" "managed dotfile content update"
@@ -143,6 +149,7 @@ elif [[ "$1" == "all" || "$1" == "full" ]]; then
     run_step "applications" "all"
     run_step "shell"
     run_step "appearance"
+    run_step "tools"
     run_step "editor"
     run_step "dev-auth" "git" "ssh"
     run_step "config" "all"

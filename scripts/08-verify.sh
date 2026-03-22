@@ -43,6 +43,13 @@ check_optional "gpg-agent configuration valid" gpg-agent --gpgconf-test
 check_optional "code available" code --version
 check_optional "google-chrome available" google-chrome --version
 check_optional "colorls available" colorls --version
+check_optional "ripgrep available" rg --version
+check_optional "fd available" fd --version
+check_optional "fzf available" fzf --version
+check_optional "bat available" bat --version
+check_optional "jq available" jq --version
+check_optional "tmux available" tmux -V
+check_optional "xclip available" xclip -version
 
 if [[ -f "$HOME/.ssh/id_ed25519.pub" ]]; then
     echo "[OK][optional] SSH public key present: $HOME/.ssh/id_ed25519.pub"

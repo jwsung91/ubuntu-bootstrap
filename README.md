@@ -7,6 +7,7 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 ```text
 .
 ├── setup.sh                # Main entry point for interactive or selective setup
+├── docs/                   # Extra reference docs
 ├── scripts/                # Step-by-step setup scripts
 │   ├── 01-system.sh        # System update and required package installation
 │   ├── 02-applications.sh  # Selective VS Code and Chrome installation
@@ -15,7 +16,8 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 │   ├── 05-editor.sh        # Vim and plugin bootstrap
 │   ├── 06-config.sh        # Managed dotfile content update and config merge
 │   ├── 07-dev-auth.sh      # Git, SSH, and GPG bootstrap
-│   └── 08-verify.sh        # Tooling verification
+│   ├── 08-verify.sh        # Tooling verification
+│   └── 09-tools.sh         # Developer CLI tools
 └── dotfiles/               # Managed configuration file templates
     ├── zsh/                # Zsh configuration such as .zshrc
     ├── git/                # Git configuration such as .gitconfig
@@ -28,10 +30,11 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 2. **Applications**: lets you choose VS Code and Google Chrome individually
 3. **Terminal setup**: installs Zsh, Oh My Zsh, the `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins, and the `powerlevel10k` theme
 4. **CLI appearance**: installs the D2Coding font and `colorls`
-5. **Editor bootstrap**: installs Vim, bootstraps Vundle, and runs a non-interactive Vim plugin sync
-6. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
-7. **Developer authentication**: prepares baseline Git identity settings and optional SSH or GPG bootstrap
-8. **Verification**: checks required and optional tooling separately, prints a summary, and fails if required tools are missing
+5. **Developer tools**: installs common terminal tools such as `ripgrep`, `fd`, `fzf`, `bat`, and `jq`
+6. **Editor bootstrap**: installs Vim, bootstraps Vundle, and runs a non-interactive Vim plugin sync
+7. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
+8. **Developer authentication**: prepares baseline Git identity settings and optional SSH or GPG bootstrap
+9. **Verification**: checks required and optional tooling separately, prints a summary, and fails if required tools are missing
 
 ## Supported Environment
 
@@ -55,7 +58,7 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 ./setup.sh full
 
 # Run only selected steps
-./setup.sh run system applications shell appearance editor dev-auth config verify
+./setup.sh run system applications shell appearance tools editor dev-auth config verify
 
 # Run only the applications step and choose interactively
 ./scripts/02-applications.sh
@@ -73,10 +76,11 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 - `./setup.sh run ...` runs only the steps you specify.
 - `setup.sh` supports both interactive selection and explicit step arguments.
 - Several steps are written to be re-runnable and will reuse already installed components when possible.
-- The default full setup order is `system -> applications -> shell -> appearance -> editor -> dev-auth -> config -> verify`.
+- The default full setup order is `system -> applications -> shell -> appearance -> tools -> editor -> dev-auth -> config -> verify`.
 - The default full setup runs `dev-auth` with `git` and `ssh`; GPG is optional and can be selected separately.
 - The `config` step can apply `zsh`, `git`, and `vim` targets independently.
 - The `verify` step separates required checks from optional checks and returns a non-zero exit code when required tooling is missing.
+- CLI tool details are documented in [`docs/tools.md`](/home/rain/workspace/jwsung91/my-setup-ubuntu/docs/tools.md).
 - For Zsh, Git, and Vim, the script keeps managed files such as `~/.zshrc.my-setup-ubuntu` and updates the main config files by appending include or source blocks only when those blocks are not already present.
 - If an existing config file must be changed, the script creates a timestamped backup before writing the updated file.
 - When `chsh` changes the default shell to `zsh`, the change applies on the next login.
