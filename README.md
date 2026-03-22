@@ -11,9 +11,9 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 │   ├── 01-system.sh        # System update and required package installation
 │   ├── 02-shell.sh         # Zsh, Oh My Zsh, plugin, and theme installation
 │   ├── 03-appearance.sh    # D2Coding font and colorls installation
-│   ├── 04-stow.sh          # Dotfile symlink setup via GNU Stow
+│   ├── 04-config.sh        # Managed dotfile content update and config merge
 │   └── 05-applications.sh  # Selective VS Code and Chrome installation
-└── dotfiles/               # Managed configuration files for Stow
+└── dotfiles/               # Managed configuration file templates
     ├── zsh/                # Zsh configuration such as .zshrc
     ├── git/                # Git configuration such as .gitconfig
     └── vim/                # Vim configuration such as .vimrc
@@ -21,11 +21,11 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 
 ## Included Features
 
-1. **System packages**: runs `apt update && apt upgrade` and installs required packages such as `curl`, `wget`, `git`, `stow`, and `build-essential`
+1. **System packages**: runs `apt update && apt upgrade` and installs required packages such as `curl`, `wget`, `git`, and `build-essential`
 2. **Applications**: lets you choose VS Code and Google Chrome individually
 3. **Terminal setup**: installs Zsh, Oh My Zsh, the `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins, and the `powerlevel10k` theme
 4. **CLI appearance**: installs the D2Coding font and `colorls`
-5. **Dotfile management**: links files from `dotfiles/` into the home directory with GNU Stow
+5. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
 
 ## Supported Environment
 
@@ -61,7 +61,8 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 
 - `setup.sh` supports both interactive selection and explicit step arguments.
 - Several steps are written to be re-runnable and will reuse already installed components when possible.
-- Before applying `stow`, the script checks for conflicts. If files with the same target names already exist in your home directory, the process stops until you resolve them.
+- For Zsh, Git, and Vim, the script keeps managed files such as `~/.zshrc.my-setup-ubuntu` and updates the main config files by appending include or source blocks only when those blocks are not already present.
+- If an existing config file must be changed, the script creates a timestamped backup before writing the updated file.
 - When `chsh` changes the default shell to `zsh`, the change applies on the next login.
 
 ## Additional Configuration

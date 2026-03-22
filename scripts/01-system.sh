@@ -17,4 +17,4 @@ fi
 echo "--- Updating the system and installing required packages ---"
 sudo apt update
 sudo apt upgrade -y
-sudo apt install -y curl wget git stow build-essential apt-transport-https gnupg ca-certificates lsb-release
+sudo apt install -y curl wget git build-essential apt-transport-https gnupg ca-certificates lsb-release

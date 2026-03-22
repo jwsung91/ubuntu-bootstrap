@@ -17,7 +17,7 @@ Available steps:
   applications  VS Code and Chrome
   shell         Zsh, Oh My Zsh, plugins, and theme
   appearance   D2Coding font and colorls
-  stow         Dotfile symlinks via GNU Stow
+  config       Managed dotfile content update
 EOF
 }
 
@@ -37,8 +37,8 @@ run_step() {
         appearance)
             ./scripts/03-appearance.sh
             ;;
-        stow)
-            ./scripts/04-stow.sh
+        config)
+            ./scripts/04-config.sh
             ;;
         *)
             echo "Unknown step: $step"
@@ -75,14 +75,14 @@ if [[ $# -eq 0 ]]; then
     prompt_step "applications" "VS Code and Chrome"
     prompt_step "shell" "Zsh, Oh My Zsh, plugins, and theme"
     prompt_step "appearance" "D2Coding font and colorls"
-    prompt_step "stow" "dotfile symlinks"
+    prompt_step "config" "managed dotfile content update"
 elif [[ "$1" == "all" ]]; then
     echo "Running all setup steps."
     run_step "system"
     run_step "applications" "all"
     run_step "shell"
     run_step "appearance"
-    run_step "stow"
+    run_step "config"
 else
     echo "Running selected setup steps: $*"
     for step in "$@"; do
