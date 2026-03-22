@@ -17,7 +17,8 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 │   ├── 06-config.sh        # Managed dotfile content update and config merge
 │   ├── 07-dev-auth.sh      # Git, SSH, and GPG bootstrap
 │   ├── 08-verify.sh        # Tooling verification
-│   └── 09-tools.sh         # Developer CLI tools
+│   ├── 09-tools.sh         # Developer CLI tools
+│   └── 10-restore.sh       # Restore latest config backups
 └── dotfiles/               # Managed configuration file templates
     ├── zsh/                # Zsh configuration such as .zshrc
     ├── git/                # Git configuration such as .gitconfig
@@ -35,6 +36,7 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 7. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
 8. **Developer authentication**: prepares baseline Git identity settings and optional SSH or GPG bootstrap
 9. **Verification**: checks required and optional tooling separately, prints a summary, and fails if required tools are missing
+10. **Restore**: restores the latest backup for managed config targets when you need to roll back
 
 ## Supported Environment
 
@@ -79,6 +81,7 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 - The default full setup order is `system -> applications -> shell -> appearance -> tools -> editor -> dev-auth -> config -> verify`.
 - The default full setup runs `dev-auth` with `git` and `ssh`; GPG is optional and can be selected separately.
 - The `config` step can apply `zsh`, `git`, and `vim` targets independently.
+- The `restore` step can restore the latest backup for `zsh`, `git`, and `vim` targets independently.
 - The `verify` step separates required checks from optional checks and returns a non-zero exit code when required tooling is missing.
 - CLI tool details are documented in [`docs/tools.md`](/home/rain/workspace/jwsung91/my-setup-ubuntu/docs/tools.md).
 - For Zsh, Git, and Vim, the script keeps managed files such as `~/.zshrc.my-setup-ubuntu` and updates the main config files by appending include or source blocks only when those blocks are not already present.

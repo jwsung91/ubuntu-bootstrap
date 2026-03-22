@@ -24,6 +24,7 @@ Available steps:
   editor        Vim and plugin bootstrap
   dev-auth      Git, SSH, and GPG bootstrap
   config        Managed dotfile content update
+  restore       Restore latest config backups
   verify        Tooling verification
 EOF
 }
@@ -57,6 +58,9 @@ run_step() {
             ;;
         config)
             ./scripts/06-config.sh "$@"
+            ;;
+        restore)
+            ./scripts/10-restore.sh "$@"
             ;;
         verify)
             ./scripts/08-verify.sh
@@ -99,6 +103,7 @@ select_steps_with_whiptail() {
             "editor" "Vim and plugin bootstrap" OFF \
             "dev-auth" "Git, SSH, and GPG bootstrap" OFF \
             "config" "Managed dotfile content update" OFF \
+            "restore" "Restore latest config backups" OFF \
             "verify" "Tooling verification" OFF \
             3>&1 1>&2 2>&3
     ) || return 1
@@ -141,6 +146,7 @@ if [[ $# -eq 0 || "$1" == "select" ]]; then
         prompt_step "editor" "Vim and plugin bootstrap"
         prompt_step "dev-auth" "Git, SSH, and GPG bootstrap"
         prompt_step "config" "managed dotfile content update"
+        prompt_step "restore" "restore latest config backups"
         prompt_step "verify" "tooling verification"
     fi
 elif [[ "$1" == "all" || "$1" == "full" ]]; then

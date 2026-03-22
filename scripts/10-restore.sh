@@ -1,0 +1,149 @@
+#!/bin/bash
+set -euo pipefail
+
+RUN_ZSH=0
+RUN_GIT=0
+RUN_VIM=0
+
+ZSH_USER_TARGET="$HOME/.zshrc"
+ZSH_MANAGED_TARGET="$HOME/.zshrc.my-setup-ubuntu"
+
+GIT_USER_TARGET="$HOME/.gitconfig"
+GIT_MANAGED_TARGET="$HOME/.gitconfig.my-setup-ubuntu"
+
+VIM_USER_TARGET="$HOME/.vimrc"
+VIM_MANAGED_TARGET="$HOME/.vimrc.my-setup-ubuntu"
+
+usage() {
+    cat <<'EOF'
+Usage:
+  ./scripts/10-restore.sh              Choose restore targets interactively
+  ./scripts/10-restore.sh all          Restore zsh, git, and vim backups
+  ./scripts/10-restore.sh zsh git      Restore only zsh and git backups
+  ./scripts/10-restore.sh vim          Restore only vim backups
+EOF
+}
+
+select_restore_with_whiptail() {
+    local selection
+    local -a selected_items
+
+    selection=$(
+        whiptail \
+            --title "Restore" \
+            --checklist "Select the config targets to restore" \
+            16 72 6 \
+            "zsh" "Restore ~/.zshrc backups" OFF \
+            "git" "Restore ~/.gitconfig backups" OFF \
+            "vim" "Restore ~/.vimrc backups" OFF \
+            3>&1 1>&2 2>&3
+    ) || return 1
+
+    selection="${selection//\"/}"
+    read -r -a selected_items <<< "$selection"
+
+    if [[ ${#selected_items[@]} -eq 0 ]]; then
+        echo "No restore targets selected. Skipping."
+        return 1
+    fi
+
+    for item in "${selected_items[@]}"; do
+        case "$item" in
+            zsh) RUN_ZSH=1 ;;
+            git) RUN_GIT=1 ;;
+            vim) RUN_VIM=1 ;;
+        esac
+    done
+}
+
+latest_backup_for() {
+    local target="$1"
+    ls -1t "${target}.bak."* 2>/dev/null | head -n 1
+}
+
+restore_latest_backup() {
+    local target="$1"
+    local backup_path
+
+    backup_path="$(latest_backup_for "$target")"
+    if [[ -z "${backup_path:-}" ]]; then
+        echo "No backup found for $target"
+        return
+    fi
+
+    cp "$backup_path" "$target"
+    echo "Restored $target from $backup_path"
+}
+
+restore_zsh() {
+    echo "--- Restoring zsh backups ---"
+    restore_latest_backup "$ZSH_USER_TARGET"
+    restore_latest_backup "$ZSH_MANAGED_TARGET"
+}
+
+restore_git() {
+    echo "--- Restoring git backups ---"
+    restore_latest_backup "$GIT_USER_TARGET"
+    restore_latest_backup "$GIT_MANAGED_TARGET"
+}
+
+restore_vim() {
+    echo "--- Restoring vim backups ---"
+    restore_latest_backup "$VIM_USER_TARGET"
+    restore_latest_backup "$VIM_MANAGED_TARGET"
+}
+
+if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
+    usage
+    exit 0
+fi
+
+if [[ $# -eq 0 ]]; then
+    if command -v whiptail >/dev/null 2>&1; then
+        select_restore_with_whiptail || exit 0
+    else
+        echo "No restore targets selected. Skipping."
+        exit 0
+    fi
+else
+    for item in "$@"; do
+        case "$item" in
+            all)
+                RUN_ZSH=1
+                RUN_GIT=1
+                RUN_VIM=1
+                ;;
+            zsh)
+                RUN_ZSH=1
+                ;;
+            git)
+                RUN_GIT=1
+                ;;
+            vim)
+                RUN_VIM=1
+                ;;
+            *)
+                echo "Unknown restore target: $item"
+                usage
+                exit 1
+                ;;
+        esac
+    done
+fi
+
+if [[ "$RUN_ZSH" -eq 0 && "$RUN_GIT" -eq 0 && "$RUN_VIM" -eq 0 ]]; then
+    echo "No restore targets selected. Skipping."
+    exit 0
+fi
+
+if [[ "$RUN_ZSH" -eq 1 ]]; then
+    restore_zsh
+fi
+
+if [[ "$RUN_GIT" -eq 1 ]]; then
+    restore_git
+fi
+
+if [[ "$RUN_VIM" -eq 1 ]]; then
+    restore_vim
+fi
