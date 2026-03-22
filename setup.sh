@@ -10,14 +10,15 @@ usage() {
 Usage:
   ./setup.sh                Start interactive step selection
   ./setup.sh all            Run every setup step
-  ./setup.sh system applications shell   Run only selected steps
+  ./setup.sh system applications shell appearance editor config   Run only selected steps
 
 Available steps:
   system        System update and required packages
   applications  VS Code and Chrome
   shell         Zsh, Oh My Zsh, plugins, and theme
-  appearance   D2Coding font and colorls
-  config       Managed dotfile content update
+  appearance    D2Coding font and colorls
+  editor        Vim and plugin bootstrap
+  config        Managed dotfile content update
 EOF
 }
 
@@ -29,16 +30,19 @@ run_step() {
             ./scripts/01-system.sh
             ;;
         applications)
-            ./scripts/05-applications.sh "$@"
+            ./scripts/02-applications.sh "$@"
             ;;
         shell)
-            ./scripts/02-shell.sh
+            ./scripts/03-shell.sh
             ;;
         appearance)
-            ./scripts/03-appearance.sh
+            ./scripts/04-appearance.sh
+            ;;
+        editor)
+            ./scripts/05-editor.sh
             ;;
         config)
-            ./scripts/04-config.sh
+            ./scripts/06-config.sh
             ;;
         *)
             echo "Unknown step: $step"
@@ -75,6 +79,7 @@ if [[ $# -eq 0 ]]; then
     prompt_step "applications" "VS Code and Chrome"
     prompt_step "shell" "Zsh, Oh My Zsh, plugins, and theme"
     prompt_step "appearance" "D2Coding font and colorls"
+    prompt_step "editor" "Vim and plugin bootstrap"
     prompt_step "config" "managed dotfile content update"
 elif [[ "$1" == "all" ]]; then
     echo "Running all setup steps."
@@ -82,6 +87,7 @@ elif [[ "$1" == "all" ]]; then
     run_step "applications" "all"
     run_step "shell"
     run_step "appearance"
+    run_step "editor"
     run_step "config"
 else
     echo "Running selected setup steps: $*"

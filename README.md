@@ -9,10 +9,11 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 ├── setup.sh                # Main entry point for interactive or selective setup
 ├── scripts/                # Step-by-step setup scripts
 │   ├── 01-system.sh        # System update and required package installation
-│   ├── 02-shell.sh         # Zsh, Oh My Zsh, plugin, and theme installation
-│   ├── 03-appearance.sh    # D2Coding font and colorls installation
-│   ├── 04-config.sh        # Managed dotfile content update and config merge
-│   └── 05-applications.sh  # Selective VS Code and Chrome installation
+│   ├── 02-applications.sh  # Selective VS Code and Chrome installation
+│   ├── 03-shell.sh         # Zsh, Oh My Zsh, plugin, and theme installation
+│   ├── 04-appearance.sh    # D2Coding font and colorls installation
+│   ├── 05-editor.sh        # Vim and plugin bootstrap
+│   └── 06-config.sh        # Managed dotfile content update and config merge
 └── dotfiles/               # Managed configuration file templates
     ├── zsh/                # Zsh configuration such as .zshrc
     ├── git/                # Git configuration such as .gitconfig
@@ -25,7 +26,8 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 2. **Applications**: lets you choose VS Code and Google Chrome individually
 3. **Terminal setup**: installs Zsh, Oh My Zsh, the `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins, and the `powerlevel10k` theme
 4. **CLI appearance**: installs the D2Coding font and `colorls`
-5. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
+5. **Editor bootstrap**: installs Vim, Vundle, and the Vim plugins referenced by the managed `.vimrc`
+6. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
 
 ## Supported Environment
 
@@ -46,13 +48,13 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 ./setup.sh all
 
 # Run only selected steps
-./setup.sh system applications shell
+./setup.sh system applications shell appearance editor config
 
 # Run only the applications step and choose interactively
-./scripts/05-applications.sh
+./scripts/02-applications.sh
 
 # Install only VS Code
-./scripts/05-applications.sh vscode
+./scripts/02-applications.sh vscode
 ```
 
 > Note: `sudo` privileges are required during execution. Each script uses `set -euo pipefail` and exits early on unsupported Ubuntu versions or architectures.
@@ -61,6 +63,7 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 
 - `setup.sh` supports both interactive selection and explicit step arguments.
 - Several steps are written to be re-runnable and will reuse already installed components when possible.
+- The default full setup order is `system -> applications -> shell -> appearance -> editor -> config`.
 - For Zsh, Git, and Vim, the script keeps managed files such as `~/.zshrc.my-setup-ubuntu` and updates the main config files by appending include or source blocks only when those blocks are not already present.
 - If an existing config file must be changed, the script creates a timestamped backup before writing the updated file.
 - When `chsh` changes the default shell to `zsh`, the change applies on the next login.

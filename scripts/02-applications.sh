@@ -16,11 +16,11 @@ trap cleanup EXIT
 usage() {
     cat <<'EOF'
 Usage:
-  ./scripts/05-applications.sh           Choose applications interactively
-  ./scripts/05-applications.sh all       Install every application
-  ./scripts/05-applications.sh vscode    Install VS Code only
-  ./scripts/05-applications.sh chrome    Install Google Chrome only
-  ./scripts/05-applications.sh vscode chrome
+  ./scripts/02-applications.sh           Choose applications interactively
+  ./scripts/02-applications.sh all       Install every application
+  ./scripts/02-applications.sh vscode    Install VS Code only
+  ./scripts/02-applications.sh chrome    Install Google Chrome only
+  ./scripts/02-applications.sh vscode chrome
 EOF
 }
 
