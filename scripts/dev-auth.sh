@@ -7,21 +7,9 @@ SSH_KEY_PATH="$HOME/.ssh/id_ed25519"
 RUN_GIT=0
 RUN_SSH=0
 RUN_GPG=0
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-configure_whiptail_colors() {
-    export NEWT_COLORS='
-root=,black
-window=white,black
-border=blue,black
-title=cyan,black
-textbox=white,black
-checkbox=white,black
-actcheckbox=black,yellow
-button=black,blue
-actbutton=white,blue
-entry=white,black
-'
-}
+source "$SCRIPT_DIR/lib/ui.sh"
 
 usage() {
     cat <<'EOF'

@@ -6,20 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 RAN_ANY_STEP=0
 
-configure_whiptail_colors() {
-    export NEWT_COLORS='
-root=,black
-window=white,black
-border=blue,black
-title=cyan,black
-textbox=white,black
-checkbox=white,black
-actcheckbox=black,yellow
-button=black,blue
-actbutton=white,blue
-entry=white,black
-'
-}
+source "$SCRIPT_DIR/scripts/lib/ui.sh"
 
 usage() {
     cat <<'EOF'

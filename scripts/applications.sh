@@ -6,27 +6,15 @@ UBUNTU_VERSION="$(lsb_release -rs)"
 TMP_DIR="$(mktemp -d)"
 INSTALL_VSCODE=0
 INSTALL_CHROME=0
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$SCRIPT_DIR/lib/ui.sh"
 
 cleanup() {
     rm -rf "$TMP_DIR"
 }
 
 trap cleanup EXIT
-
-configure_whiptail_colors() {
-    export NEWT_COLORS='
-root=,black
-window=white,black
-border=blue,black
-title=cyan,black
-textbox=white,black
-checkbox=white,black
-actcheckbox=black,yellow
-button=black,blue
-actbutton=white,blue
-entry=white,black
-'
-}
 
 usage() {
     cat <<'EOF'
