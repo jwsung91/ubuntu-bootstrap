@@ -8,12 +8,14 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 .
 ├── setup.sh                # Main entry point for interactive or selective setup
 ├── docs/                   # Extra reference docs
+├── proxy/                  # Proxy profile files such as work.env
 ├── scripts/                # Step-by-step setup scripts
 │   ├── applications.sh     # Selective VS Code and Chrome installation
 │   ├── appearance.sh       # D2Coding font and colorls installation
 │   ├── config.sh           # Managed dotfile content update and config merge
 │   ├── dev-auth.sh         # Git, SSH, and GPG bootstrap
 │   ├── editor.sh           # Vim and plugin bootstrap
+│   ├── proxy.sh            # Proxy profile activation
 │   ├── restore.sh          # Restore latest config backups
 │   ├── shell.sh            # Zsh, Oh My Zsh, plugin, and theme installation
 │   ├── system.sh           # System update and required package installation
@@ -27,16 +29,17 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 
 ## Included Features
 
-1. **System packages**: runs `apt update && apt upgrade` and installs required packages such as `curl`, `wget`, `git`, and `build-essential`
-2. **Applications**: lets you choose VS Code and Google Chrome individually
-3. **Terminal setup**: installs Zsh, Oh My Zsh, the `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins, and the `powerlevel10k` theme
-4. **CLI appearance**: installs the D2Coding font and `colorls`
-5. **Developer tools**: installs common terminal tools such as `ripgrep`, `fd`, `fzf`, `bat`, and `jq`
-6. **Editor bootstrap**: installs Vim, bootstraps Vundle, and runs a non-interactive Vim plugin sync
-7. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
-8. **Developer authentication**: prepares baseline Git identity settings and optional SSH or GPG bootstrap
-9. **Verification**: checks required and optional tooling separately, prints a summary, and fails if required tools are missing
-10. **Restore**: restores the latest backup for managed config targets when you need to roll back
+1. **Proxy profiles**: activates one of several proxy profiles before network-heavy steps
+2. **System packages**: runs `apt update && apt upgrade` and installs required packages such as `curl`, `wget`, `git`, and `build-essential`
+3. **Applications**: lets you choose VS Code and Google Chrome individually
+4. **Terminal setup**: installs Zsh, Oh My Zsh, the `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins, and the `powerlevel10k` theme
+5. **CLI appearance**: installs the D2Coding font and `colorls`
+6. **Developer tools**: installs common terminal tools such as `ripgrep`, `fd`, `fzf`, `bat`, and `jq`
+7. **Editor bootstrap**: installs Vim, bootstraps Vundle, and runs a non-interactive Vim plugin sync
+8. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
+9. **Developer authentication**: prepares baseline Git identity settings and optional SSH or GPG bootstrap
+10. **Verification**: checks required and optional tooling separately, prints a summary, and fails if required tools are missing
+11. **Restore**: restores the latest backup for managed config targets when you need to roll back
 
 ## Supported Environment
 
@@ -60,7 +63,10 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 ./setup.sh full
 
 # Run only selected steps
-./setup.sh run system applications shell appearance tools editor dev-auth config verify
+./setup.sh run proxy system applications shell appearance tools editor dev-auth config verify
+
+# Choose and activate a proxy profile
+./scripts/proxy.sh
 
 # Run only the applications step and choose interactively
 ./scripts/applications.sh
@@ -78,8 +84,10 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 - `./setup.sh run ...` runs only the steps you specify.
 - `setup.sh` supports both interactive selection and explicit step arguments.
 - Several steps are written to be re-runnable and will reuse already installed components when possible.
-- The default full setup order is `system -> applications -> shell -> appearance -> tools -> editor -> dev-auth -> config -> verify`.
+- The default full setup order is `proxy -> system -> applications -> shell -> appearance -> tools -> editor -> dev-auth -> config -> verify`.
 - The default full setup runs `dev-auth` with `git` and `ssh`; GPG is optional and can be selected separately.
+- The `proxy` step activates one profile from `proxy/*.env` by linking it to `.proxy.env`.
+- When `full` is used, the `proxy` step auto-selects only when there is already an active `.proxy.env` file or exactly one available profile.
 - The `config` step can apply `zsh`, `git`, and `vim` targets independently.
 - The `restore` step can restore the latest backup for `zsh`, `git`, and `vim` targets independently.
 - The `verify` step separates required checks from optional checks and returns a non-zero exit code when required tooling is missing.

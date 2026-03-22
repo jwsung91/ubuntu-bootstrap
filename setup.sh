@@ -15,9 +15,10 @@ Usage:
   ./setup.sh select         Start interactive step selection
   ./setup.sh full           Run every setup step in order
   ./setup.sh all            Run every setup step in order
-  ./setup.sh run system applications shell   Run only selected steps
+  ./setup.sh run proxy system applications shell   Run only selected steps
 
 Available steps:
+  proxy         Activate a proxy profile for networked steps
   system        System update and required packages
   applications  VS Code and Chrome
   shell         Zsh, Oh My Zsh, plugins, and theme
@@ -37,6 +38,9 @@ run_step() {
     RAN_ANY_STEP=1
 
     case "$step" in
+        proxy)
+            ./scripts/proxy.sh "$@"
+            ;;
         system)
             ./scripts/system.sh
             ;;
@@ -96,7 +100,8 @@ select_steps_with_whiptail() {
         whiptail \
             --title "Ubuntu Setup" \
             --checklist "Select the steps to run" \
-            20 90 10 \
+            20 90 11 \
+            "proxy" "Activate a proxy profile" OFF \
             "system" "System update and required packages" OFF \
             "applications" "VS Code and Chrome" OFF \
             "shell" "Zsh, Oh My Zsh, plugins, and theme" OFF \
@@ -142,6 +147,7 @@ if [[ $# -eq 0 || "$1" == "select" ]]; then
             exit 0
         fi
     else
+        prompt_step "proxy" "activate a proxy profile"
         prompt_step "system" "system update and required packages"
         prompt_step "applications" "VS Code and Chrome"
         prompt_step "shell" "Zsh, Oh My Zsh, plugins, and theme"
@@ -155,6 +161,7 @@ if [[ $# -eq 0 || "$1" == "select" ]]; then
     fi
 elif [[ "$1" == "all" || "$1" == "full" ]]; then
     echo "Running all setup steps."
+    run_step "proxy" "auto"
     run_step "system"
     run_step "applications" "all"
     run_step "shell"
