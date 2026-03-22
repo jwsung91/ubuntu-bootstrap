@@ -13,7 +13,9 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 │   ├── 03-shell.sh         # Zsh, Oh My Zsh, plugin, and theme installation
 │   ├── 04-appearance.sh    # D2Coding font and colorls installation
 │   ├── 05-editor.sh        # Vim and plugin bootstrap
-│   └── 06-config.sh        # Managed dotfile content update and config merge
+│   ├── 06-config.sh        # Managed dotfile content update and config merge
+│   ├── 07-dev-auth.sh      # Git, SSH, and GPG bootstrap
+│   └── 08-verify.sh        # Tooling verification
 └── dotfiles/               # Managed configuration file templates
     ├── zsh/                # Zsh configuration such as .zshrc
     ├── git/                # Git configuration such as .gitconfig
@@ -28,6 +30,8 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 4. **CLI appearance**: installs the D2Coding font and `colorls`
 5. **Editor bootstrap**: installs Vim, bootstraps Vundle, and runs a non-interactive Vim plugin sync
 6. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
+7. **Developer authentication**: prepares baseline Git identity settings and optional SSH or GPG bootstrap
+8. **Verification**: checks the installed tooling and reports missing pieces
 
 ## Supported Environment
 
@@ -51,7 +55,7 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 ./setup.sh full
 
 # Run only selected steps
-./setup.sh run system applications shell appearance editor config
+./setup.sh run system applications shell appearance editor dev-auth config verify
 
 # Run only the applications step and choose interactively
 ./scripts/02-applications.sh
@@ -69,10 +73,12 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 - `./setup.sh run ...` runs only the steps you specify.
 - `setup.sh` supports both interactive selection and explicit step arguments.
 - Several steps are written to be re-runnable and will reuse already installed components when possible.
-- The default full setup order is `system -> applications -> shell -> appearance -> editor -> config`.
+- The default full setup order is `system -> applications -> shell -> appearance -> editor -> dev-auth -> config -> verify`.
+- The default full setup runs `dev-auth` with `git` and `ssh`; GPG is optional and can be selected separately.
 - For Zsh, Git, and Vim, the script keeps managed files such as `~/.zshrc.my-setup-ubuntu` and updates the main config files by appending include or source blocks only when those blocks are not already present.
 - If an existing config file must be changed, the script creates a timestamped backup before writing the updated file.
 - When `chsh` changes the default shell to `zsh`, the change applies on the next login.
+- The `dev-auth` step uses `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`, `NAME`, or `EMAIL` if they are already set in the environment.
 
 ## Additional Configuration
 

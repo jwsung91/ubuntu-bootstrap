@@ -21,7 +21,9 @@ Available steps:
   shell         Zsh, Oh My Zsh, plugins, and theme
   appearance    D2Coding font and colorls
   editor        Vim and plugin bootstrap
+  dev-auth      Git, SSH, and GPG bootstrap
   config        Managed dotfile content update
+  verify        Tooling verification
 EOF
 }
 
@@ -46,8 +48,14 @@ run_step() {
         editor)
             ./scripts/05-editor.sh
             ;;
+        dev-auth)
+            ./scripts/07-dev-auth.sh "$@"
+            ;;
         config)
             ./scripts/06-config.sh
+            ;;
+        verify)
+            ./scripts/08-verify.sh
             ;;
         *)
             echo "Unknown step: $step"
@@ -84,7 +92,9 @@ select_steps_with_whiptail() {
             "shell" "Zsh, Oh My Zsh, plugins, and theme" OFF \
             "appearance" "D2Coding font and colorls" OFF \
             "editor" "Vim and plugin bootstrap" OFF \
+            "dev-auth" "Git, SSH, and GPG bootstrap" OFF \
             "config" "Managed dotfile content update" OFF \
+            "verify" "Tooling verification" OFF \
             3>&1 1>&2 2>&3
     ) || return 1
 
@@ -123,7 +133,9 @@ if [[ $# -eq 0 || "$1" == "select" ]]; then
         prompt_step "shell" "Zsh, Oh My Zsh, plugins, and theme"
         prompt_step "appearance" "D2Coding font and colorls"
         prompt_step "editor" "Vim and plugin bootstrap"
+        prompt_step "dev-auth" "Git, SSH, and GPG bootstrap"
         prompt_step "config" "managed dotfile content update"
+        prompt_step "verify" "tooling verification"
     fi
 elif [[ "$1" == "all" || "$1" == "full" ]]; then
     echo "Running all setup steps."
@@ -132,7 +144,9 @@ elif [[ "$1" == "all" || "$1" == "full" ]]; then
     run_step "shell"
     run_step "appearance"
     run_step "editor"
+    run_step "dev-auth" "git" "ssh"
     run_step "config"
+    run_step "verify"
 elif [[ "$1" == "run" ]]; then
     shift
     if [[ $# -eq 0 ]]; then
