@@ -9,6 +9,21 @@ RUN_JQ=0
 RUN_TMUX=0
 RUN_XCLIP=0
 
+configure_whiptail_colors() {
+    export NEWT_COLORS='
+root=,black
+window=white,black
+border=blue,black
+title=cyan,black
+textbox=white,black
+checkbox=white,black
+actcheckbox=black,yellow
+button=black,blue
+actbutton=white,blue
+entry=white,black
+'
+}
+
 usage() {
     cat <<'EOF'
 Usage:
@@ -62,6 +77,8 @@ if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
     usage
     exit 0
 fi
+
+configure_whiptail_colors
 
 if [[ $# -eq 0 ]]; then
     if command -v whiptail >/dev/null 2>&1; then

@@ -6,6 +6,21 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
 RAN_ANY_STEP=0
 
+configure_whiptail_colors() {
+    export NEWT_COLORS='
+root=,black
+window=white,black
+border=blue,black
+title=cyan,black
+textbox=white,black
+checkbox=white,black
+actcheckbox=black,yellow
+button=black,blue
+actbutton=white,blue
+entry=white,black
+'
+}
+
 usage() {
     cat <<'EOF'
 Usage:
@@ -126,6 +141,8 @@ if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
     usage
     exit 0
 fi
+
+configure_whiptail_colors
 
 echo "Making all scripts executable..."
 chmod +x scripts/*.sh
