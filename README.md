@@ -44,11 +44,14 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 # Start interactive step selection
 ./setup.sh
 
-# Run the full setup
-./setup.sh all
+# Start interactive step selection explicitly
+./setup.sh select
+
+# Run the full setup in order
+./setup.sh full
 
 # Run only selected steps
-./setup.sh system applications shell appearance editor config
+./setup.sh run system applications shell appearance editor config
 
 # Run only the applications step and choose interactively
 ./scripts/02-applications.sh
@@ -61,6 +64,9 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 
 ## Behavior
 
+- `./setup.sh select` lets you choose steps one by one.
+- `./setup.sh full` runs the full setup in the default order.
+- `./setup.sh run ...` runs only the steps you specify.
 - `setup.sh` supports both interactive selection and explicit step arguments.
 - Several steps are written to be re-runnable and will reuse already installed components when possible.
 - The default full setup order is `system -> applications -> shell -> appearance -> editor -> config`.

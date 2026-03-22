@@ -4,13 +4,16 @@ set -euo pipefail
 # Set the working directory to the absolute path of this script.
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$SCRIPT_DIR"
+RAN_ANY_STEP=0
 
 usage() {
     cat <<'EOF'
 Usage:
   ./setup.sh                Start interactive step selection
-  ./setup.sh all            Run every setup step
-  ./setup.sh system applications shell appearance editor config   Run only selected steps
+  ./setup.sh select         Start interactive step selection
+  ./setup.sh full           Run every setup step in order
+  ./setup.sh all            Run every setup step in order
+  ./setup.sh run system applications shell   Run only selected steps
 
 Available steps:
   system        System update and required packages
@@ -24,6 +27,8 @@ EOF
 
 run_step() {
     local step="$1"
+    shift || true
+    RAN_ANY_STEP=1
 
     case "$step" in
         system)
@@ -65,6 +70,38 @@ prompt_step() {
     fi
 }
 
+select_steps_with_whiptail() {
+    local selection
+    local -a selected_steps
+
+    selection=$(
+        whiptail \
+            --title "Ubuntu Setup" \
+            --checklist "Select the steps to run" \
+            20 90 10 \
+            "system" "System update and required packages" OFF \
+            "applications" "VS Code and Chrome" OFF \
+            "shell" "Zsh, Oh My Zsh, plugins, and theme" OFF \
+            "appearance" "D2Coding font and colorls" OFF \
+            "editor" "Vim and plugin bootstrap" OFF \
+            "config" "Managed dotfile content update" OFF \
+            3>&1 1>&2 2>&3
+    ) || return 1
+
+    selection="${selection//\"/}"
+    read -r -a selected_steps <<< "$selection"
+
+    if [[ ${#selected_steps[@]} -eq 0 ]]; then
+        echo "No steps selected. Exiting."
+        return 1
+    fi
+
+    echo "Running selected setup steps: ${selected_steps[*]}"
+    for step in "${selected_steps[@]}"; do
+        run_step "$step"
+    done
+}
+
 if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
     usage
     exit 0
@@ -73,15 +110,22 @@ fi
 echo "Making all scripts executable..."
 chmod +x scripts/*.sh
 
-if [[ $# -eq 0 ]]; then
+if [[ $# -eq 0 || "$1" == "select" ]]; then
     echo "No steps were passed. Starting interactive selection."
-    prompt_step "system" "system update and required packages"
-    prompt_step "applications" "VS Code and Chrome"
-    prompt_step "shell" "Zsh, Oh My Zsh, plugins, and theme"
-    prompt_step "appearance" "D2Coding font and colorls"
-    prompt_step "editor" "Vim and plugin bootstrap"
-    prompt_step "config" "managed dotfile content update"
-elif [[ "$1" == "all" ]]; then
+    if command -v whiptail >/dev/null 2>&1; then
+        if ! select_steps_with_whiptail; then
+            echo "Selection cancelled."
+            exit 0
+        fi
+    else
+        prompt_step "system" "system update and required packages"
+        prompt_step "applications" "VS Code and Chrome"
+        prompt_step "shell" "Zsh, Oh My Zsh, plugins, and theme"
+        prompt_step "appearance" "D2Coding font and colorls"
+        prompt_step "editor" "Vim and plugin bootstrap"
+        prompt_step "config" "managed dotfile content update"
+    fi
+elif [[ "$1" == "all" || "$1" == "full" ]]; then
     echo "Running all setup steps."
     run_step "system"
     run_step "applications" "all"
@@ -89,6 +133,18 @@ elif [[ "$1" == "all" ]]; then
     run_step "appearance"
     run_step "editor"
     run_step "config"
+elif [[ "$1" == "run" ]]; then
+    shift
+    if [[ $# -eq 0 ]]; then
+        echo "No steps were provided for run."
+        usage
+        exit 1
+    fi
+
+    echo "Running selected setup steps: $*"
+    for step in "$@"; do
+        run_step "$step"
+    done
 else
     echo "Running selected setup steps: $*"
     for step in "$@"; do
@@ -96,6 +152,8 @@ else
     done
 fi
 
-echo "=========================================="
-echo "Setup complete. Restart your terminal."
-echo "=========================================="
+if [[ "$RAN_ANY_STEP" -eq 1 ]]; then
+    echo "=========================================="
+    echo "Setup complete. Restart your terminal."
+    echo "=========================================="
+fi

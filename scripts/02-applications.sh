@@ -42,6 +42,40 @@ prompt_application() {
     [[ "$answer" =~ ^[Yy]$ ]]
 }
 
+select_applications_with_whiptail() {
+    local selection
+    local -a selected_apps
+
+    selection=$(
+        whiptail \
+            --title "Applications" \
+            --checklist "Select the applications to install" \
+            15 70 5 \
+            "vscode" "Visual Studio Code" OFF \
+            "chrome" "Google Chrome" OFF \
+            3>&1 1>&2 2>&3
+    ) || return 1
+
+    selection="${selection//\"/}"
+    read -r -a selected_apps <<< "$selection"
+
+    if [[ ${#selected_apps[@]} -eq 0 ]]; then
+        echo "No applications selected. Skipping."
+        return 1
+    fi
+
+    for app in "${selected_apps[@]}"; do
+        case "$app" in
+            vscode)
+                INSTALL_VSCODE=1
+                ;;
+            chrome)
+                INSTALL_CHROME=1
+                ;;
+        esac
+    done
+}
+
 install_prerequisites() {
     echo "--- Installing application prerequisites ---"
     sudo apt update
@@ -74,8 +108,12 @@ if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
 fi
 
 if [[ $# -eq 0 ]]; then
-    prompt_application "VS Code" && INSTALL_VSCODE=1
-    prompt_application "Google Chrome" && INSTALL_CHROME=1
+    if command -v whiptail >/dev/null 2>&1; then
+        select_applications_with_whiptail || exit 0
+    else
+        prompt_application "VS Code" && INSTALL_VSCODE=1
+        prompt_application "Google Chrome" && INSTALL_CHROME=1
+    fi
 else
     for app in "$@"; do
         case "$app" in
