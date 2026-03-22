@@ -1,30 +1,63 @@
 #!/bin/bash
 set -euo pipefail
 
-check_command() {
+REQUIRED_OK=0
+REQUIRED_WARN=0
+OPTIONAL_OK=0
+OPTIONAL_WARN=0
+
+check_required() {
     local label="$1"
     shift
 
     if "$@" >/dev/null 2>&1; then
-        echo "[OK] $label"
+        echo "[OK][required] $label"
+        REQUIRED_OK=$((REQUIRED_OK + 1))
     else
-        echo "[WARN] $label"
+        echo "[WARN][required] $label"
+        REQUIRED_WARN=$((REQUIRED_WARN + 1))
+    fi
+}
+
+check_optional() {
+    local label="$1"
+    shift
+
+    if "$@" >/dev/null 2>&1; then
+        echo "[OK][optional] $label"
+        OPTIONAL_OK=$((OPTIONAL_OK + 1))
+    else
+        echo "[WARN][optional] $label"
+        OPTIONAL_WARN=$((OPTIONAL_WARN + 1))
     fi
 }
 
 echo "--- Verifying installed tooling ---"
-check_command "git available" git --version
-check_command "zsh available" zsh --version
-check_command "vim available" vim --version
-check_command "gpg available" gpg --version
-check_command "gpg-agent configuration valid" gpg-agent --gpgconf-test
-check_command "code available" code --version
-check_command "google-chrome available" google-chrome --version
-check_command "colorls available" colorls --version
-check_command "ssh available" ssh -V
+check_required "git available" git --version
+check_required "zsh available" zsh --version
+check_required "vim available" vim --version
+check_required "ssh available" ssh -V
+
+check_optional "gpg available" gpg --version
+check_optional "gpg-agent configuration valid" gpg-agent --gpgconf-test
+check_optional "code available" code --version
+check_optional "google-chrome available" google-chrome --version
+check_optional "colorls available" colorls --version
 
 if [[ -f "$HOME/.ssh/id_ed25519.pub" ]]; then
-    echo "[OK] SSH public key present: $HOME/.ssh/id_ed25519.pub"
+    echo "[OK][optional] SSH public key present: $HOME/.ssh/id_ed25519.pub"
+    OPTIONAL_OK=$((OPTIONAL_OK + 1))
 else
-    echo "[WARN] SSH public key missing: $HOME/.ssh/id_ed25519.pub"
+    echo "[WARN][optional] SSH public key missing: $HOME/.ssh/id_ed25519.pub"
+    OPTIONAL_WARN=$((OPTIONAL_WARN + 1))
+fi
+
+echo "--- Verification summary ---"
+echo "Required passed: $REQUIRED_OK"
+echo "Required warnings: $REQUIRED_WARN"
+echo "Optional passed: $OPTIONAL_OK"
+echo "Optional warnings: $OPTIONAL_WARN"
+
+if [[ "$REQUIRED_WARN" -gt 0 ]]; then
+    exit 1
 fi

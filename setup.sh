@@ -52,7 +52,7 @@ run_step() {
             ./scripts/07-dev-auth.sh "$@"
             ;;
         config)
-            ./scripts/06-config.sh
+            ./scripts/06-config.sh "$@"
             ;;
         verify)
             ./scripts/08-verify.sh
@@ -145,7 +145,7 @@ elif [[ "$1" == "all" || "$1" == "full" ]]; then
     run_step "appearance"
     run_step "editor"
     run_step "dev-auth" "git" "ssh"
-    run_step "config"
+    run_step "config" "all"
     run_step "verify"
 elif [[ "$1" == "run" ]]; then
     shift

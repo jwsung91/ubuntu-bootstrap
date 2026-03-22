@@ -31,7 +31,7 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 5. **Editor bootstrap**: installs Vim, bootstraps Vundle, and runs a non-interactive Vim plugin sync
 6. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
 7. **Developer authentication**: prepares baseline Git identity settings and optional SSH or GPG bootstrap
-8. **Verification**: checks the installed tooling and reports missing pieces
+8. **Verification**: checks required and optional tooling separately, prints a summary, and fails if required tools are missing
 
 ## Supported Environment
 
@@ -75,6 +75,8 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 - Several steps are written to be re-runnable and will reuse already installed components when possible.
 - The default full setup order is `system -> applications -> shell -> appearance -> editor -> dev-auth -> config -> verify`.
 - The default full setup runs `dev-auth` with `git` and `ssh`; GPG is optional and can be selected separately.
+- The `config` step can apply `zsh`, `git`, and `vim` targets independently.
+- The `verify` step separates required checks from optional checks and returns a non-zero exit code when required tooling is missing.
 - For Zsh, Git, and Vim, the script keeps managed files such as `~/.zshrc.my-setup-ubuntu` and updates the main config files by appending include or source blocks only when those blocks are not already present.
 - If an existing config file must be changed, the script creates a timestamped backup before writing the updated file.
 - When `chsh` changes the default shell to `zsh`, the change applies on the next login.

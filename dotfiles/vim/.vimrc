@@ -35,61 +35,73 @@ au BufReadPost *
 \ endif
 
 " Set Vundle
-set rtp+=~/.vim/bundle/Vundle.vim 
-call vundle#begin() 
-Plugin 'VundleVim/Vundle.vim' "required
-Plugin 'tpope/vim-fugitive' "required
+if isdirectory(expand('~/.vim/bundle/Vundle.vim'))
+  set rtp+=~/.vim/bundle/Vundle.vim
+  call vundle#begin()
+  Plugin 'VundleVim/Vundle.vim' "required
+  Plugin 'tpope/vim-fugitive' "required
 
-Plugin 'preservim/nerdtree'
-Plugin 'preservim/nerdcommenter'
+  Plugin 'preservim/nerdtree'
+  Plugin 'preservim/nerdcommenter'
 
-Plugin 'Raimondi/delimitMate'
+  Plugin 'Raimondi/delimitMate'
 
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+  Plugin 'vim-airline/vim-airline'
+  Plugin 'vim-airline/vim-airline-themes'
 
-"Plugin 'Valloric/YouCompleteMe'
+  "Plugin 'Valloric/YouCompleteMe'
 
-Plugin 'joshdick/onedark.vim'  " One Dark theme
+  Plugin 'joshdick/onedark.vim'  " One Dark theme
 
-call vundle#end()            
-filetype plugin indent on " Put your non-Plugin stuff after this line
+  call vundle#end()
+  filetype plugin indent on " Put your non-Plugin stuff after this line
+endif
 
 " Plugin Settings
-let delimitMate_expand_cr=1
+if exists('g:loaded_delimitMate')
+  let delimitMate_expand_cr=1
+endif
 
 " The-NERD-Tree
 autocmd BufEnter * lcd %:p:h
-autocmd VimEnter * if !argc() | NERDTree | endif
-nmap <leader>ne :NERDTreeToggle<cr>
-let NERDTreeShowLineNumbers=1
-let g:NERDTreeWinPos = "left"
-map <F3> :NERDTreeToggle<cr>
+if exists(':NERDTreeToggle')
+  autocmd VimEnter * if !argc() | NERDTree | endif
+  nmap <leader>ne :NERDTreeToggle<cr>
+  let NERDTreeShowLineNumbers=1
+  let g:NERDTreeWinPos = "left"
+  map <F3> :NERDTreeToggle<cr>
+endif
 
 " for vim-airline
-let g:airline#extensions#tabline#enabled = 1 " turn on buffer list
-let g:airline_theme='hybrid'
-set laststatus=2 " turn on bottom bar
+if exists('g:loaded_airline')
+  let g:airline#extensions#tabline#enabled = 1 " turn on buffer list
+  let g:airline_theme='hybrid'
+  set laststatus=2 " turn on bottom bar
+endif
 
 " NERD Commenter
 " Add spaces after comment delimiters by default
-let g:NERDSpaceDelims = 1
+if exists('g:loaded_nerdcommenter')
+  let g:NERDSpaceDelims = 1
 " Use compact syntax for prettified multi-line comments
-let g:NERDCompactSexyComs = 1
+  let g:NERDCompactSexyComs = 1
 " Align line-wise comment delimiters flush left instead of following code indentation
-let g:NERDDefaultAlign = 'left'
+  let g:NERDDefaultAlign = 'left'
 " Set a language to use its alternate delimiters by default
-let g:NERDAltDelims_java = 1
+  let g:NERDAltDelims_java = 1
 " Add your own custom formats or override the defaults
-let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+  let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
 " Allow commenting and inverting empty lines (useful when commenting a region)
-let g:NERDCommentEmptyLines = 1
+  let g:NERDCommentEmptyLines = 1
 " Enable trimming of trailing whitespace when uncommenting
-let g:NERDTrimTrailingWhitespace = 1
+  let g:NERDTrimTrailingWhitespace = 1
 " customize keymapping
-map <Leader>cc <plug>NERDComToggleComment
-map <Leader>c<space> <plug>NERDComComment
+  map <Leader>cc <plug>NERDComToggleComment
+  map <Leader>c<space> <plug>NERDComComment
+endif
 
 syntax enable
 set background=dark
-colorscheme onedark
+if filereadable(expand('~/.vim/bundle/onedark.vim/colors/onedark.vim'))
+  colorscheme onedark
+endif

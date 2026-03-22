@@ -5,6 +5,9 @@ echo "--- Applying managed dotfile content ---"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DOTFILES_DIR="$SCRIPT_DIR/../dotfiles"
 BACKUP_PATH=""
+RUN_ZSH=0
+RUN_GIT=0
+RUN_VIM=0
 
 ZSH_SOURCE="$DOTFILES_DIR/zsh/.zshrc"
 ZSH_MANAGED_TARGET="$HOME/.zshrc.my-setup-ubuntu"
@@ -28,6 +31,48 @@ if [[ ! -d "$DOTFILES_DIR" ]]; then
     echo "dotfiles directory not found: $DOTFILES_DIR"
     exit 1
 fi
+
+usage() {
+    cat <<'EOF'
+Usage:
+  ./scripts/06-config.sh              Choose config targets interactively
+  ./scripts/06-config.sh all          Apply zsh, git, and vim config
+  ./scripts/06-config.sh zsh git      Apply only zsh and git config
+  ./scripts/06-config.sh vim          Apply only vim config
+EOF
+}
+
+select_config_with_whiptail() {
+    local selection
+    local -a selected_items
+
+    selection=$(
+        whiptail \
+            --title "Config" \
+            --checklist "Select the config targets to apply" \
+            16 72 6 \
+            "zsh" "Managed zsh config" ON \
+            "git" "Managed git config" ON \
+            "vim" "Managed vim config" ON \
+            3>&1 1>&2 2>&3
+    ) || return 1
+
+    selection="${selection//\"/}"
+    read -r -a selected_items <<< "$selection"
+
+    if [[ ${#selected_items[@]} -eq 0 ]]; then
+        echo "No config targets selected. Skipping."
+        return 1
+    fi
+
+    for item in "${selected_items[@]}"; do
+        case "$item" in
+            zsh) RUN_ZSH=1 ;;
+            git) RUN_GIT=1 ;;
+            vim) RUN_VIM=1 ;;
+        esac
+    done
+}
 
 backup_file() {
     local file_path="$1"
@@ -106,29 +151,91 @@ EOF
     echo "Created $user_target with managed block"
 }
 
-install_managed_file "$ZSH_SOURCE" "$ZSH_MANAGED_TARGET"
-ensure_block_in_file \
-    "$ZSH_USER_TARGET" \
-    "$ZSH_MARKER_START" \
-    "$ZSH_MARKER_END" \
-    "source \"$ZSH_MANAGED_TARGET\"" \
-    "if [ -f \"$ZSH_MANAGED_TARGET\" ]; then" \
-    "    source \"$ZSH_MANAGED_TARGET\""$'\n''fi'
+apply_zsh_config() {
+    install_managed_file "$ZSH_SOURCE" "$ZSH_MANAGED_TARGET"
+    ensure_block_in_file \
+        "$ZSH_USER_TARGET" \
+        "$ZSH_MARKER_START" \
+        "$ZSH_MARKER_END" \
+        "source \"$ZSH_MANAGED_TARGET\"" \
+        "if [ -f \"$ZSH_MANAGED_TARGET\" ]; then" \
+        "    source \"$ZSH_MANAGED_TARGET\""$'\n''fi'
+}
 
-install_managed_file "$GIT_SOURCE" "$GIT_MANAGED_TARGET"
-ensure_block_in_file \
-    "$GIT_USER_TARGET" \
-    "$GIT_MARKER_START" \
-    "$GIT_MARKER_END" \
-    "path = $GIT_MANAGED_TARGET" \
-    "[include]" \
-    "    path = $GIT_MANAGED_TARGET"
+apply_git_config() {
+    install_managed_file "$GIT_SOURCE" "$GIT_MANAGED_TARGET"
+    ensure_block_in_file \
+        "$GIT_USER_TARGET" \
+        "$GIT_MARKER_START" \
+        "$GIT_MARKER_END" \
+        "path = $GIT_MANAGED_TARGET" \
+        "[include]" \
+        "    path = $GIT_MANAGED_TARGET"
+}
 
-install_managed_file "$VIM_SOURCE" "$VIM_MANAGED_TARGET"
-ensure_block_in_file \
-    "$VIM_USER_TARGET" \
-    "$VIM_MARKER_START" \
-    "$VIM_MARKER_END" \
-    "source $VIM_MANAGED_TARGET" \
-    "if filereadable(expand('$VIM_MANAGED_TARGET'))" \
-    "    source $VIM_MANAGED_TARGET"$'\n''endif'
+apply_vim_config() {
+    install_managed_file "$VIM_SOURCE" "$VIM_MANAGED_TARGET"
+    ensure_block_in_file \
+        "$VIM_USER_TARGET" \
+        "$VIM_MARKER_START" \
+        "$VIM_MARKER_END" \
+        "source $VIM_MANAGED_TARGET" \
+        "if filereadable(expand('$VIM_MANAGED_TARGET'))" \
+        "    source $VIM_MANAGED_TARGET"$'\n''endif'
+}
+
+if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
+    usage
+    exit 0
+fi
+
+if [[ $# -eq 0 ]]; then
+    if command -v whiptail >/dev/null 2>&1; then
+        select_config_with_whiptail || exit 0
+    else
+        RUN_ZSH=1
+        RUN_GIT=1
+        RUN_VIM=1
+    fi
+else
+    for item in "$@"; do
+        case "$item" in
+            all)
+                RUN_ZSH=1
+                RUN_GIT=1
+                RUN_VIM=1
+                ;;
+            zsh)
+                RUN_ZSH=1
+                ;;
+            git)
+                RUN_GIT=1
+                ;;
+            vim)
+                RUN_VIM=1
+                ;;
+            *)
+                echo "Unknown config target: $item"
+                usage
+                exit 1
+                ;;
+        esac
+    done
+fi
+
+if [[ "$RUN_ZSH" -eq 0 && "$RUN_GIT" -eq 0 && "$RUN_VIM" -eq 0 ]]; then
+    echo "No config targets selected. Skipping."
+    exit 0
+fi
+
+if [[ "$RUN_ZSH" -eq 1 ]]; then
+    apply_zsh_config
+fi
+
+if [[ "$RUN_GIT" -eq 1 ]]; then
+    apply_git_config
+fi
+
+if [[ "$RUN_VIM" -eq 1 ]]; then
+    apply_vim_config
+fi
