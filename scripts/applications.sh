@@ -9,6 +9,8 @@ INSTALL_CHROME=0
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$SCRIPT_DIR/lib/ui.sh"
+source "$SCRIPT_DIR/lib/proxy.sh"
+load_proxy_settings
 
 cleanup() {
     rm -rf "$TMP_DIR"
@@ -81,8 +83,8 @@ select_applications_with_whiptail() {
 
 install_prerequisites() {
     echo "--- Installing application prerequisites ---"
-    sudo apt update
-    sudo apt install -y curl wget apt-transport-https gnupg ca-certificates
+    apt_with_proxy update
+    apt_with_proxy install -y curl wget apt-transport-https gnupg ca-certificates
 }
 
 install_vscode() {
@@ -94,15 +96,15 @@ install_vscode() {
     sudo chmod 0644 /etc/apt/keyrings/packages.microsoft.gpg
     echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" \
         | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
-    sudo apt update
-    sudo apt install -y code
+    apt_with_proxy update
+    apt_with_proxy install -y code
 }
 
 install_chrome() {
     echo "--- Installing Google Chrome ---"
     CHROME_DEB="$TMP_DIR/google-chrome-stable_current_amd64.deb"
     wget -O "$CHROME_DEB" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    sudo apt install -y "$CHROME_DEB"
+    apt_with_proxy install -y "$CHROME_DEB"
 }
 
 if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then

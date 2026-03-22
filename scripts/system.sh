@@ -3,6 +3,10 @@ set -euo pipefail
 
 ARCH="$(dpkg --print-architecture)"
 UBUNTU_VERSION="$(lsb_release -rs)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$SCRIPT_DIR/lib/proxy.sh"
+load_proxy_settings
 
 if [[ "$ARCH" != "amd64" ]]; then
     echo "This script supports Ubuntu Desktop amd64 only. Current architecture: $ARCH"
@@ -15,6 +19,6 @@ if [[ "$UBUNTU_VERSION" != "22.04" && "$UBUNTU_VERSION" != "24.04" ]]; then
 fi
 
 echo "--- Updating the system and installing required packages ---"
-sudo apt update
-sudo apt upgrade -y
-sudo apt install -y curl wget git build-essential apt-transport-https gnupg ca-certificates lsb-release
+apt_with_proxy update
+apt_with_proxy upgrade -y
+apt_with_proxy install -y curl wget git build-essential apt-transport-https gnupg ca-certificates lsb-release

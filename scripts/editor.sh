@@ -3,6 +3,10 @@ set -euo pipefail
 
 VIM_BUNDLE_DIR="$HOME/.vim/bundle"
 TEMP_DIR="$(mktemp -d)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$SCRIPT_DIR/lib/proxy.sh"
+load_proxy_settings
 
 cleanup() {
     rm -rf "$TEMP_DIR"
@@ -12,7 +16,7 @@ trap cleanup EXIT
 
 install_vim() {
     echo "--- Installing Vim ---"
-    sudo apt install -y vim
+    apt_with_proxy install -y vim
 }
 
 install_plugin() {

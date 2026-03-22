@@ -3,6 +3,10 @@ set -euo pipefail
 
 FONT_DIR="$HOME/.local/share/fonts"
 TEMP_DIR="$(mktemp -d)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$SCRIPT_DIR/lib/proxy.sh"
+load_proxy_settings
 
 cleanup() {
     rm -rf "$TEMP_DIR"
@@ -12,7 +16,7 @@ trap cleanup EXIT
 
 echo "--- Installing the D2Coding font ---"
 mkdir -p "$FONT_DIR"
-sudo apt install -y unzip ruby-full
+apt_with_proxy install -y unzip ruby-full
 
 if ! fc-list | grep -qi "D2Coding"; then
     cd "$TEMP_DIR"
@@ -26,7 +30,7 @@ fi
 
 echo "--- Installing colorls (Ruby gem) ---"
 if ! command -v colorls >/dev/null 2>&1; then
-    sudo gem install colorls
+    gem_with_proxy install colorls
 else
     echo "colorls is already installed."
 fi

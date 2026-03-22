@@ -10,6 +10,8 @@ RUN_GPG=0
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$SCRIPT_DIR/lib/ui.sh"
+source "$SCRIPT_DIR/lib/proxy.sh"
+load_proxy_settings
 
 usage() {
     cat <<'EOF'
@@ -100,12 +102,12 @@ fi
 
 if [[ "$RUN_SSH" -eq 1 || "$RUN_GPG" -eq 1 ]]; then
     echo "--- Installing developer authentication prerequisites ---"
-    sudo apt install -y openssh-client
+    apt_with_proxy install -y openssh-client
 fi
 
 setup_gpg() {
     echo "--- Preparing GnuPG directory ---"
-    sudo apt install -y pinentry-gnome3 pinentry-curses
+    apt_with_proxy install -y pinentry-gnome3 pinentry-curses
     mkdir -p "$HOME/.gnupg"
     chmod 700 "$HOME/.gnupg"
 

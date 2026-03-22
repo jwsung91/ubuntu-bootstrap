@@ -1,9 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+source "$SCRIPT_DIR/lib/proxy.sh"
+load_proxy_settings
+
 install_zsh() {
     echo "--- Installing Zsh and setting it as the default shell ---"
-    sudo apt install -y zsh
+    apt_with_proxy install -y zsh
 
     local zsh_path
     local current_shell

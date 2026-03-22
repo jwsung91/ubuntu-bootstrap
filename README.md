@@ -84,6 +84,7 @@ Run one of the following commands from inside the `my-setup-ubuntu` repository:
 - The `restore` step can restore the latest backup for `zsh`, `git`, and `vim` targets independently.
 - The `verify` step separates required checks from optional checks and returns a non-zero exit code when required tooling is missing.
 - CLI tool details are documented in [`docs/tools.md`](/home/rain/workspace/jwsung91/my-setup-ubuntu/docs/tools.md).
+- Proxy setup is optional and documented in [`docs/proxy.md`](/home/rain/workspace/jwsung91/my-setup-ubuntu/docs/proxy.md).
 - For Zsh, Git, and Vim, the script keeps managed files such as `~/.zshrc.my-setup-ubuntu` and updates the main config files by appending include or source blocks only when those blocks are not already present.
 - If an existing config file must be changed, the script creates a timestamped backup before writing the updated file.
 - When `chsh` changes the default shell to `zsh`, the change applies on the next login.

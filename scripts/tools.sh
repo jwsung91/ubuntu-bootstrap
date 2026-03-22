@@ -11,6 +11,8 @@ RUN_XCLIP=0
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$SCRIPT_DIR/lib/ui.sh"
+source "$SCRIPT_DIR/lib/proxy.sh"
+load_proxy_settings
 
 usage() {
     cat <<'EOF'
@@ -136,8 +138,8 @@ PACKAGES=()
 [[ "$RUN_XCLIP" -eq 1 ]] && PACKAGES+=("xclip")
 
 echo "--- Installing developer CLI tools ---"
-sudo apt update
-sudo apt install -y "${PACKAGES[@]}"
+apt_with_proxy update
+apt_with_proxy install -y "${PACKAGES[@]}"
 
 if [[ "$RUN_BAT" -eq 1 ]] && command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
     mkdir -p "$HOME/.local/bin"
