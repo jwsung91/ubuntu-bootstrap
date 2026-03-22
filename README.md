@@ -9,7 +9,7 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 ├── setup.sh                # Main entry point for interactive or selective setup
 ├── scripts/                # Step-by-step setup scripts
 │   ├── 01-system.sh        # System update, VS Code, and Chrome installation
-│   ├── 02-shell.sh         # Zsh, Oh My Zsh, and plugin installation
+│   ├── 02-shell.sh         # Zsh, Oh My Zsh, plugin, and theme installation
 │   ├── 03-appearance.sh    # D2Coding font and colorls installation
 │   └── 04-stow.sh          # Dotfile symlink setup via GNU Stow
 └── dotfiles/               # Managed configuration files for Stow
@@ -22,7 +22,7 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 
 1. **System packages**: runs `apt update && apt upgrade` and installs required packages such as `curl`, `wget`, `git`, `stow`, and `build-essential`
 2. **Developer tools**: registers the official VS Code repository and installs Google Chrome
-3. **Terminal setup**: installs Zsh, Oh My Zsh, and the `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins
+3. **Terminal setup**: installs Zsh, Oh My Zsh, the `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins, and the `powerlevel10k` theme
 4. **CLI appearance**: installs the D2Coding font and `colorls`
 5. **Dotfile management**: links files from `dotfiles/` into the home directory with GNU Stow
 
