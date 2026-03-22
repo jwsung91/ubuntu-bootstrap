@@ -6,7 +6,7 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 
 ```text
 .
-├── install.sh              # Main entry point that runs the full setup
+├── setup.sh                # Main entry point for interactive or selective setup
 ├── scripts/                # Step-by-step setup scripts
 │   ├── 01-system.sh        # System update, VS Code, and Chrome installation
 │   ├── 02-shell.sh         # Zsh, Oh My Zsh, and plugin installation
@@ -35,17 +35,24 @@ ARM-based Ubuntu is not supported because the Chrome package used by the script 
 
 ## Installation
 
-Run the following command from inside the `my-setup-ubuntu` repository:
+Run one of the following commands from inside the `my-setup-ubuntu` repository:
 
 ```bash
-# Start the full setup
-./install.sh
+# Start interactive step selection
+./setup.sh
+
+# Run the full setup
+./setup.sh all
+
+# Run only selected steps
+./setup.sh system shell
 ```
 
 > Note: `sudo` privileges are required during execution. Each script uses `set -euo pipefail` and exits early on unsupported Ubuntu versions or architectures.
 
 ## Behavior
 
+- `setup.sh` supports both interactive selection and explicit step arguments.
 - Several steps are written to be re-runnable and will reuse already installed components when possible.
 - Before applying `stow`, the script checks for conflicts. If files with the same target names already exist in your home directory, the process stops until you resolve them.
 - When `chsh` changes the default shell to `zsh`, the change applies on the next login.
