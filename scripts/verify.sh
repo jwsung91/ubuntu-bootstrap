@@ -64,6 +64,9 @@ check_optional "bat available" bat --version
 check_optional "jq available" jq --version
 check_optional "tmux available" tmux -V
 check_optional "xclip available" xclip -version
+check_optional "python3 available" python3 --version
+check_optional "pipx available" pipx --version
+check_optional "pyenv available" pyenv --version
 check_optional "git user.name configured" git config --global user.name
 check_optional "git user.email configured" git config --global user.email
 

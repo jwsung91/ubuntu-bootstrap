@@ -1,6 +1,12 @@
 # Oh My Zsh configuration
 export ZSH="$HOME/.oh-my-zsh"
 export PATH="$HOME/.local/bin:$PATH"
+export PYENV_ROOT="$HOME/.pyenv"
+
+if [ -x "$PYENV_ROOT/bin/pyenv" ]; then
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init - zsh)"
+fi
 
 if [ -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
     ZSH_THEME="powerlevel10k/powerlevel10k"

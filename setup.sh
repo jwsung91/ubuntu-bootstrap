@@ -24,6 +24,7 @@ Available steps:
   shell         Zsh, Oh My Zsh, plugins, and theme
   appearance    D2Coding font and colorls
   tools         Developer CLI tools
+  python        Python via pyenv and pipx bootstrap
   editor        Vim and plugin bootstrap
   dev-auth      Git, SSH, and GPG bootstrap
   config        Managed dotfile content update
@@ -55,6 +56,9 @@ run_step() {
             ;;
         tools)
             ./scripts/tools.sh "$@"
+            ;;
+        python)
+            ./scripts/python.sh "$@"
             ;;
         editor)
             ./scripts/editor.sh
@@ -107,6 +111,7 @@ select_steps_with_whiptail() {
             "shell" "Zsh, Oh My Zsh, plugins, and theme" OFF \
             "appearance" "D2Coding font and colorls" OFF \
             "tools" "Developer CLI tools" OFF \
+            "python" "Python via pyenv and pipx bootstrap" OFF \
             "editor" "Vim and plugin bootstrap" OFF \
             "dev-auth" "Git, SSH, and GPG bootstrap" OFF \
             "config" "Managed dotfile content update" OFF \
@@ -153,6 +158,7 @@ if [[ $# -eq 0 || "$1" == "select" ]]; then
         prompt_step "shell" "Zsh, Oh My Zsh, plugins, and theme"
         prompt_step "appearance" "D2Coding font and colorls"
         prompt_step "tools" "developer CLI tools"
+        prompt_step "python" "Python via pyenv and pipx bootstrap"
         prompt_step "editor" "Vim and plugin bootstrap"
         prompt_step "dev-auth" "Git, SSH, and GPG bootstrap"
         prompt_step "config" "managed dotfile content update"
@@ -167,6 +173,7 @@ elif [[ "$1" == "all" || "$1" == "full" ]]; then
     run_step "shell"
     run_step "appearance"
     run_step "tools"
+    run_step "python"
     run_step "editor"
     run_step "dev-auth" "git" "ssh"
     run_step "config" "all"
