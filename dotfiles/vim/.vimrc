@@ -37,11 +37,11 @@ au BufReadPost *
 " Set Vundle
 set rtp+=~/.vim/bundle/Vundle.vim 
 call vundle#begin() 
-Plugin 'gmarik/Vundle.vim' "required
+Plugin 'VundleVim/Vundle.vim' "required
 Plugin 'tpope/vim-fugitive' "required
 
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/nerdcommenter'
+Plugin 'preservim/nerdtree'
+Plugin 'preservim/nerdcommenter'
 
 Plugin 'Raimondi/delimitMate'
 

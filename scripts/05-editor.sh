@@ -2,6 +2,13 @@
 set -euo pipefail
 
 VIM_BUNDLE_DIR="$HOME/.vim/bundle"
+TEMP_DIR="$(mktemp -d)"
+
+cleanup() {
+    rm -rf "$TEMP_DIR"
+}
+
+trap cleanup EXIT
 
 install_vim() {
     echo "--- Installing Vim ---"
@@ -19,19 +26,35 @@ install_plugin() {
     fi
 }
 
-install_vim_plugins() {
-    echo "--- Installing Vim plugin manager and plugins ---"
+install_vundle() {
+    echo "--- Installing Vim plugin manager ---"
     mkdir -p "$VIM_BUNDLE_DIR"
-
     install_plugin "https://github.com/VundleVim/Vundle.vim.git" "$VIM_BUNDLE_DIR/Vundle.vim"
-    install_plugin "https://github.com/tpope/vim-fugitive.git" "$VIM_BUNDLE_DIR/vim-fugitive"
-    install_plugin "https://github.com/preservim/nerdtree.git" "$VIM_BUNDLE_DIR/nerdtree"
-    install_plugin "https://github.com/preservim/nerdcommenter.git" "$VIM_BUNDLE_DIR/nerdcommenter"
-    install_plugin "https://github.com/Raimondi/delimitMate.git" "$VIM_BUNDLE_DIR/delimitMate"
-    install_plugin "https://github.com/vim-airline/vim-airline.git" "$VIM_BUNDLE_DIR/vim-airline"
-    install_plugin "https://github.com/vim-airline/vim-airline-themes.git" "$VIM_BUNDLE_DIR/vim-airline-themes"
-    install_plugin "https://github.com/joshdick/onedark.vim.git" "$VIM_BUNDLE_DIR/onedark.vim"
+}
+
+sync_vim_plugins() {
+    local bootstrap_vimrc
+    bootstrap_vimrc="$TEMP_DIR/vundle-bootstrap.vim"
+
+    echo "--- Syncing Vim plugins with Vundle ---"
+    cat > "$bootstrap_vimrc" <<'EOF'
+set nocompatible
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'preservim/nerdtree'
+Plugin 'preservim/nerdcommenter'
+Plugin 'Raimondi/delimitMate'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'joshdick/onedark.vim'
+call vundle#end()
+EOF
+
+    vim -Nu "$bootstrap_vimrc" -n -es +PluginInstall +qall
 }
 
 install_vim
-install_vim_plugins
+install_vundle
+sync_vim_plugins

@@ -26,7 +26,7 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 2. **Applications**: lets you choose VS Code and Google Chrome individually
 3. **Terminal setup**: installs Zsh, Oh My Zsh, the `zsh-autosuggestions` and `zsh-syntax-highlighting` plugins, and the `powerlevel10k` theme
 4. **CLI appearance**: installs the D2Coding font and `colorls`
-5. **Editor bootstrap**: installs Vim, Vundle, and the Vim plugins referenced by the managed `.vimrc`
+5. **Editor bootstrap**: installs Vim, bootstraps Vundle, and runs a non-interactive Vim plugin sync
 6. **Dotfile management**: backs up existing config files, installs managed config fragments, and adds include or source blocks without duplication
 
 ## Supported Environment
