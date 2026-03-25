@@ -31,7 +31,8 @@ fi
 
 log_section "Installing colorls (Ruby gem)"
 if ! command -v colorls >/dev/null 2>&1; then
-    gem_with_proxy install colorls
+    # ⚡ Bolt optimization: Skip slow doc generation
+    gem_with_proxy install colorls -N
 else
     log_info "colorls is already installed."
 fi

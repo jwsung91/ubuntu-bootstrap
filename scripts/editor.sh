@@ -25,7 +25,8 @@ install_plugin() {
     local plugin_dir="$2"
 
     if [[ ! -d "$plugin_dir" ]]; then
-        git clone "$repo_url" "$plugin_dir"
+        # ⚡ Bolt optimization: Shallow clone to save time/bandwidth
+        git clone --depth=1 "$repo_url" "$plugin_dir"
     else
         log_info "Plugin already installed: $plugin_dir"
     fi
