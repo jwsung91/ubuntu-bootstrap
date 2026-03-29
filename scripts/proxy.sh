@@ -37,6 +37,8 @@ print_profiles() {
 
     if [[ "$found" -eq 0 ]]; then
         log_warn "No proxy profiles found in $PROXY_DIR"
+        log_info "Create one from .proxy.env.example and place it under proxy/."
+        return 1
     fi
 }
 
@@ -114,7 +116,9 @@ select_profile_with_whiptail() {
 prompt_for_proxy_profile() {
     local profile_name
 
-    print_profiles
+    if ! print_profiles; then
+        return 1
+    fi
     printf 'Enter proxy profile name to activate: '
     read -r profile_name
 
