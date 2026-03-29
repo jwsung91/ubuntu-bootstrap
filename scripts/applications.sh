@@ -59,15 +59,13 @@ select_applications_with_whiptail() {
             "vscode" "Visual Studio Code" OFF \
             "chrome" "Google Chrome" OFF \
             3>&1 1>&2 2>&3
-    ) || return 1
+    ) || {
+        log_warn "Selection cancelled."
+        return 1
+    }
 
     selection="${selection//\"/}"
     read -r -a selected_apps <<< "$selection"
-
-    if [[ ${#selected_apps[@]} -eq 0 ]]; then
-        log_warn "No applications selected. Skipping."
-        return 1
-    fi
 
     for app in "${selected_apps[@]}"; do
         case "$app" in

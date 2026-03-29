@@ -40,15 +40,13 @@ select_tools_with_whiptail() {
             "tmux" "Terminal multiplexer" OFF \
             "xclip" "Clipboard utility for X11" OFF \
             3>&1 1>&2 2>&3
-    ) || return 1
+    ) || {
+        log_warn "Selection cancelled."
+        return 1
+    }
 
     selection="${selection//\"/}"
     read -r -a selected_items <<< "$selection"
-
-    if [[ ${#selected_items[@]} -eq 0 ]]; then
-        log_warn "No tools selected. Skipping."
-        return 1
-    fi
 
     for item in "${selected_items[@]}"; do
         case "$item" in

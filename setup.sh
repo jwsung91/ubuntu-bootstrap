@@ -178,14 +178,17 @@ select_steps_with_whiptail() {
             "restore" "Restore latest config backups" OFF \
             "verify" "Tooling verification" OFF \
             3>&1 1>&2 2>&3
-    ) || return 1
+    ) || {
+        log_warn "Selection cancelled."
+        return 1
+    }
 
     selection="${selection//\"/}"
     read -r -a selected_steps <<< "$selection"
 
     if [[ ${#selected_steps[@]} -eq 0 ]]; then
         log_warn "No steps selected. Exiting."
-        return 1
+        exit 0
     fi
 
     log_info "Running selected setup steps: ${selected_steps[*]}"
@@ -208,7 +211,6 @@ if [[ $# -eq 0 || "$1" == "select" ]]; then
     log_info "No steps were passed. Starting interactive selection."
     if command -v whiptail >/dev/null 2>&1; then
         if ! select_steps_with_whiptail; then
-            log_warn "Selection cancelled."
             exit 0
         fi
     else
