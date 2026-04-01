@@ -13,3 +13,7 @@
 ## 2025-03-25 - CLI Prompt Standardization
 **Learning:** Raw `read -p` and `printf` prompts without visual distinction blend in with terminal output, causing users to miss the prompt or get confused about what input is expected. This reduces parsing speed and accessibility.
 **Action:** Standardize interactive CLI prompt styling across the application using a dedicated helper function (like `log_ask`) that provides consistent, recognizable visual cues (e.g., a colored `[?]` prefix).
+
+## $(date +%Y-%m-%d) - Add confirmation for destructive actions in CLI fallbacks
+**Learning:** When falling back from interactive UI tools (like whiptail) to standard terminal I/O, developers sometimes accidentally bypass explicit user confirmation for destructive actions, causing silent overwrites.
+**Action:** Always ensure that destructive actions (like file overwrites) have explicit user confirmation (e.g., using `log_ask`) in both interactive and standard terminal fallback paths, while properly handling fully non-interactive environments via `[[ ! -t 0 ]]`.

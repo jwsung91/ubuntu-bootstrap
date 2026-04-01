@@ -104,7 +104,21 @@ select_backup_for_target() {
         return 0
     fi
 
-    printf '%s\n' "${backups[0]}"
+    if [[ ! -t 0 ]]; then
+        printf '%s\n' "${backups[0]}"
+        return 0
+    fi
+
+    local answer
+    log_ask "Restore ${target} from latest backup (${backups[0]##*/})? [y/N] " >&2
+    read -r answer
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        printf '%s\n' "${backups[0]}"
+        return 0
+    fi
+
+    log_warn "Selection cancelled." >&2
+    return 1
 }
 
 restore_latest_backup() {
