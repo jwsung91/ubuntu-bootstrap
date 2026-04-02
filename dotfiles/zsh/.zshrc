@@ -46,3 +46,25 @@ fi
 if [ -x "$(command -v lazygit)" ]; then
     alias lg='lazygit'
 fi
+
+# Lazydocker alias
+if [ -x "$(command -v lazydocker)" ]; then
+    alias ldo='lazydocker'
+fi
+
+# Eza alias (modern ls)
+if [ -x "$(command -v eza)" ]; then
+    alias ls='eza --icons --group-directories-first'
+    alias l='eza -lbF --icons --group-directories-first'
+    alias ll='eza -lbGF --icons --group-directories-first'
+    alias llm='eza -lbGd --icons --group-directories-first --sort=modified'
+    alias la='eza -lbhHigUmuSa --icons --group-directories-first'
+    alias lx='eza -lbhHigUmuSa@ --icons --group-directories-first'
+    alias lt='eza --tree --icons --group-directories-first'
+    alias tree='eza --tree --icons --group-directories-first'
+fi
+
+# Yazi alias
+if [ -x "$(command -v yazi)" ]; then
+    alias y='yazi'
+fi
