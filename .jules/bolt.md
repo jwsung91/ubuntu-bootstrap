@@ -13,3 +13,7 @@
 ## 2024-05-24 - [Early Returns Before Prerequisites]
 **Learning:** In setup scripts, checking application installation states (e.g., using `command -v`) before running prerequisite steps like `apt update` avoids unnecessary and expensive operations if the target application is already installed.
 **Action:** Always implement early returns by checking `command -v` before downloading prerequisites or large files if the target application is already installed.
+
+## 2025-03-09 - Caching expensive external command results
+**Learning:** Checking system state repeatedly using commands like `fc-list` can introduce unnecessary overhead, especially if the result is checked multiple times within the same script block. This sub-process overhead adds up quickly.
+**Action:** Cache the result of expensive or redundant external commands in a local variable if the same check is required multiple times within a script.
