@@ -186,7 +186,7 @@ select_tools_interactive() {
 
     # 2. Use 0 0 0 for auto-sizing whiptail
     selection=$(whiptail --title "Developer Tools" --checklist \
-        "Select CLI tools to install (Space to toggle, Enter to confirm)" 0 0 0 \
+        "Select CLI tools to install (Press <Space> to toggle, <Enter> to confirm)" 0 0 0 \
         "ripgrep" "[Search] Fast recursive text search (rg)" ON \
         "fd" "[Search] Fast file finder (fd-find)" ON \
         "fzf" "[Search] Fuzzy finder for shell" ON \
