@@ -60,6 +60,27 @@ select_dev_auth_with_whiptail() {
     done
 }
 
+prompt_auth() {
+    if [[ ! -t 0 ]]; then
+        RUN_GIT=1
+        RUN_SSH=1
+        return 0
+    fi
+
+    local answer
+    log_ask "Run ${UI_BOLD}git${UI_RESET} identity defaults? [Y/n] "
+    read -r answer
+    [[ -z "$answer" || "$answer" =~ ^[Yy]$ ]] && RUN_GIT=1
+
+    log_ask "Run ${UI_BOLD}ssh${UI_RESET} key bootstrap? [Y/n] "
+    read -r answer
+    [[ -z "$answer" || "$answer" =~ ^[Yy]$ ]] && RUN_SSH=1
+
+    log_ask "Run ${UI_BOLD}gpg${UI_RESET} bootstrap? [y/N] "
+    read -r answer
+    [[ "$answer" =~ ^[Yy]$ ]] && RUN_GPG=1
+}
+
 if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
     usage
     exit 0
@@ -71,8 +92,7 @@ if [[ $# -eq 0 ]]; then
     if command -v whiptail >/dev/null 2>&1; then
         select_dev_auth_with_whiptail || exit 0
     else
-        RUN_GIT=1
-        RUN_SSH=1
+        prompt_auth
     fi
 else
     for item in "$@"; do

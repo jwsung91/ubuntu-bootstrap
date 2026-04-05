@@ -82,6 +82,28 @@ select_config_with_whiptail() {
     done
 }
 
+prompt_config() {
+    if [[ ! -t 0 ]]; then
+        RUN_ZSH=1
+        RUN_GIT=1
+        RUN_VIM=1
+        return 0
+    fi
+
+    local answer
+    log_ask "Apply managed ${UI_BOLD}zsh${UI_RESET} config? [Y/n] "
+    read -r answer
+    [[ -z "$answer" || "$answer" =~ ^[Yy]$ ]] && RUN_ZSH=1
+
+    log_ask "Apply managed ${UI_BOLD}git${UI_RESET} config? [Y/n] "
+    read -r answer
+    [[ -z "$answer" || "$answer" =~ ^[Yy]$ ]] && RUN_GIT=1
+
+    log_ask "Apply managed ${UI_BOLD}vim${UI_RESET} config? [Y/n] "
+    read -r answer
+    [[ -z "$answer" || "$answer" =~ ^[Yy]$ ]] && RUN_VIM=1
+}
+
 backup_file() {
     local file_path="$1"
     local backup_path
@@ -203,9 +225,7 @@ if [[ $# -eq 0 ]]; then
     if command -v whiptail >/dev/null 2>&1; then
         select_config_with_whiptail || exit 0
     else
-        RUN_ZSH=1
-        RUN_GIT=1
-        RUN_VIM=1
+        prompt_config
     fi
 else
     for item in "$@"; do

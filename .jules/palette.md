@@ -13,3 +13,7 @@
 ## 2025-03-25 - CLI Prompt Standardization
 **Learning:** Raw `read -p` and `printf` prompts without visual distinction blend in with terminal output, causing users to miss the prompt or get confused about what input is expected. This reduces parsing speed and accessibility.
 **Action:** Standardize interactive CLI prompt styling across the application using a dedicated helper function (like `log_ask`) that provides consistent, recognizable visual cues (e.g., a colored `[?]` prefix).
+
+## 2025-03-25 - Prevent UI Hangs in Non-Interactive Shell Environments
+**Learning:** Shell scripts using standard terminal inputs like `read -r` will hang indefinitely when executed in non-interactive CI/CD or headless environments. Attempting to fall back directly to interactive prompts when higher-level tools like `whiptail` fail causes automation pipelines to block.
+**Action:** When implementing custom interactive prompts or fallbacks, always include a guard clause at the beginning of the function (`if [[ ! -t 0 ]]; then ...`) to detect non-interactive environments. In these cases, gracefully log a warning and safely bypass the `read` operation by returning immediately or applying safe, deterministic defaults.
