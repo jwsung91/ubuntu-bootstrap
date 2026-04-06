@@ -13,3 +13,7 @@
 ## 2025-03-25 - CLI Prompt Standardization
 **Learning:** Raw `read -p` and `printf` prompts without visual distinction blend in with terminal output, causing users to miss the prompt or get confused about what input is expected. This reduces parsing speed and accessibility.
 **Action:** Standardize interactive CLI prompt styling across the application using a dedicated helper function (like `log_ask`) that provides consistent, recognizable visual cues (e.g., a colored `[?]` prefix).
+
+## 2025-03-25 - [Graceful Non-Interactive Prompts]
+**Learning:** In CLI automation scripts, `read` commands for user input will hang indefinitely if executed in non-interactive CI/CD environments.
+**Action:** Always include a `[[ ! -t 0 ]]` check at the beginning of custom prompt functions to detect non-interactive environments, returning safely and logging a warning to prevent the script from stalling.
