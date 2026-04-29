@@ -9,8 +9,8 @@ source "$SCRIPT_DIR/lib/ui.sh"
 source "$SCRIPT_DIR/lib/proxy.sh"
 load_proxy_settings
 
-if [[ "$ARCH" != "amd64" ]]; then
-    log_error "This script supports Ubuntu Desktop amd64 only. Current architecture: $ARCH"
+if [[ "$ARCH" != "amd64" && "$ARCH" != "arm64" ]]; then
+    log_error "This script supports Ubuntu Desktop amd64 and arm64 only. Current architecture: $ARCH"
     exit 1
 fi
 

@@ -84,7 +84,7 @@ check_shell() {
 }
 
 has_supported_arch() {
-    [[ "$ARCH" == "amd64" ]]
+    [[ "$ARCH" == "amd64" || "$ARCH" == "arm64" ]]
 }
 
 has_supported_ubuntu() {
@@ -115,7 +115,7 @@ print_recommendations() {
     log_section "Recommended next actions"
 
     if [[ "$WARN_SUPPORTED_ARCH" -eq 1 ]]; then
-        log_warn "Use an amd64 Ubuntu machine. The current setup does not support this architecture."
+        log_warn "Use an amd64 or arm64 Ubuntu machine. The current setup does not support this architecture."
         printed=1
     fi
 
@@ -169,8 +169,8 @@ check_required_command "wget available" wget
 check_required_command "lsb_release available" lsb_release
 check_required_command "dpkg available" dpkg
 check_required_command "whiptail available or fallback possible" bash
-check_required_test "supported architecture (amd64)" has_supported_arch
-[[ "$ARCH" == "amd64" ]] || WARN_SUPPORTED_ARCH=1
+check_required_test "supported architecture (amd64, arm64)" has_supported_arch
+[[ "$ARCH" == "amd64" || "$ARCH" == "arm64" ]] || WARN_SUPPORTED_ARCH=1
 check_required_test "supported Ubuntu version (22.04 or 24.04)" has_supported_ubuntu
 [[ "$UBUNTU_VERSION" == "22.04" || "$UBUNTU_VERSION" == "24.04" ]] || WARN_SUPPORTED_UBUNTU=1
 check_required_test "scripts directory present" test -d "$PROJECT_ROOT/scripts"

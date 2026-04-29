@@ -1,6 +1,6 @@
 # Ubuntu Bootstrap
 
-This repository contains automation scripts for quickly bootstrapping an Ubuntu Desktop 22.04 / 24.04 `amd64` environment. It covers system packages, shell setup, fonts, and developer tooling in one run.
+This repository contains automation scripts for quickly bootstrapping an Ubuntu Desktop 22.04 / 24.04 `amd64` / `arm64` environment. It covers system packages, shell setup, fonts, and developer tooling in one run.
 
 ## Project Structure
 
@@ -49,9 +49,9 @@ This repository contains automation scripts for quickly bootstrapping an Ubuntu 
 ## Supported Environment
 
 - Ubuntu Desktop `22.04` or `24.04`
-- `amd64` (`x86_64`) architecture
+- `amd64` (`x86_64`) or `arm64` (`aarch64`) architecture
 
-ARM-based Ubuntu is not supported because the Chrome package used by the script is `amd64` only.
+ARM-based Ubuntu (`arm64`) is supported, but it installs `chromium-browser` instead of Google Chrome, as Google Chrome officially only supports `amd64` on Linux.
 
 ## Installation
 

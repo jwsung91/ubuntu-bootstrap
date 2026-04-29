@@ -29,8 +29,8 @@ Usage:
 EOF
 }
 
-if [[ "$ARCH" != "amd64" ]]; then
-    log_error "This script supports Ubuntu Desktop amd64 only. Current architecture: $ARCH"
+if [[ "$ARCH" != "amd64" && "$ARCH" != "arm64" ]]; then
+    log_error "This script supports Ubuntu Desktop amd64 and arm64 only. Current architecture: $ARCH"
     exit 1
 fi
 
@@ -106,7 +106,7 @@ install_vscode() {
         | gpg --dearmor \
         | sudo tee /etc/apt/keyrings/packages.microsoft.gpg >/dev/null
     sudo chmod 0644 /etc/apt/keyrings/packages.microsoft.gpg
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" \
+    echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" \
         | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
     apt_with_proxy update
     apt_with_proxy install -y code
@@ -115,9 +115,14 @@ install_vscode() {
 install_chrome() {
     log_section "Installing Google Chrome"
 
-    CHROME_DEB="$TMP_DIR/google-chrome-stable_current_amd64.deb"
-    wget -O "$CHROME_DEB" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-    apt_with_proxy install -y "$CHROME_DEB"
+    if [[ "$ARCH" == "amd64" ]]; then
+        CHROME_DEB="$TMP_DIR/google-chrome-stable_current_amd64.deb"
+        wget -O "$CHROME_DEB" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        apt_with_proxy install -y "$CHROME_DEB"
+    elif [[ "$ARCH" == "arm64" ]]; then
+        log_info "Google Chrome is not officially available for arm64. Installing Chromium instead."
+        apt_with_proxy install -y chromium-browser
+    fi
 }
 
 if [[ $# -gt 0 && ( "$1" == "--help" || "$1" == "-h" ) ]]; then
