@@ -9,6 +9,19 @@ load_proxy_settings
 
 # Track which tools to install
 declare -A RUN_TOOLS
+
+ARCH="$(dpkg --print-architecture)"
+if [[ "$ARCH" == "amd64" ]]; then
+    GH_ARCH="x86_64"
+    RUST_ARCH="x86_64"
+elif [[ "$ARCH" == "arm64" ]]; then
+    GH_ARCH="arm64"
+    RUST_ARCH="aarch64"
+else
+    log_error "Unsupported architecture for binary downloads: $ARCH"
+    exit 1
+fi
+
 ALL_TOOLS=(
     "ripgrep" "fd" "fzf" "zoxide" "yazi"        # Search & Navigation
     "bat" "eza" "dust" "jq" "tldr"              # Modern CLI Enhancements
@@ -118,7 +131,7 @@ install_lazygit() {
     if ! command -v lazygit >/dev/null 2>&1; then
         log_section "Installing lazygit"
         local version=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
-        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${version}_Linux_x86_64.tar.gz"
+        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${version}_Linux_${GH_ARCH}.tar.gz"
         tar xf lazygit.tar.gz lazygit
         install lazygit "$HOME/.local/bin"
         rm lazygit lazygit.tar.gz
@@ -130,7 +143,7 @@ install_lazydocker() {
     if ! command -v lazydocker >/dev/null 2>&1; then
         log_section "Installing lazydocker"
         local version=$(curl -s "https://api.github.com/repos/jesseduffield/lazydocker/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
-        curl -Lo lazydocker.tar.gz "https://github.com/jesseduffield/lazydocker/releases/latest/download/lazydocker_${version}_Linux_x86_64.tar.gz"
+        curl -Lo lazydocker.tar.gz "https://github.com/jesseduffield/lazydocker/releases/latest/download/lazydocker_${version}_Linux_${GH_ARCH}.tar.gz"
         tar xf lazydocker.tar.gz lazydocker
         install lazydocker "$HOME/.local/bin"
         rm lazydocker lazydocker.tar.gz
@@ -156,7 +169,7 @@ install_dust() {
     if ! command -v dust >/dev/null 2>&1; then
         log_section "Installing dust"
         local version=$(curl -s "https://api.github.com/repos/bootandy/dust/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
-        curl -Lo dust.tar.gz "https://github.com/bootandy/dust/releases/latest/download/dust-v${version}-x86_64-unknown-linux-gnu.tar.gz"
+        curl -Lo dust.tar.gz "https://github.com/bootandy/dust/releases/latest/download/dust-v${version}-${RUST_ARCH}-unknown-linux-gnu.tar.gz"
         tar xf dust.tar.gz --strip-components=1
         install dust "$HOME/.local/bin"
         rm dust dust.tar.gz
@@ -168,12 +181,12 @@ install_yazi() {
     if ! command -v yazi >/dev/null 2>&1; then
         log_section "Installing yazi"
         local version=$(curl -s "https://api.github.com/repos/sxyazi/yazi/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
-        curl -Lo yazi.zip "https://github.com/sxyazi/yazi/releases/latest/download/yazi-x86_64-unknown-linux-musl.zip"
+        curl -Lo yazi.zip "https://github.com/sxyazi/yazi/releases/latest/download/yazi-${RUST_ARCH}-unknown-linux-musl.zip"
         unzip -q yazi.zip
-        cd yazi-x86_64-unknown-linux-musl
+        cd yazi-${RUST_ARCH}-unknown-linux-musl
         install yazi ya "$HOME/.local/bin"
         cd ..
-        rm -rf yazi.zip yazi-x86_64-unknown-linux-musl
+        rm -rf yazi.zip yazi-${RUST_ARCH}-unknown-linux-musl
         log_ok "yazi v$version installed to ~/.local/bin"
     fi
 }
